@@ -1,4 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: username <your@email.com>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/06 22:35:30 by username          #+#    #+#             */
+/*   Updated: 2024/12/06 23:29:42 by username         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
+
 char	*ft_strdup(const char *src)
 {
 	char	*str;
@@ -17,35 +30,19 @@ char	*ft_strdup(const char *src)
 	return (str);
 }
 
-size_t	ft_strlen(const char *s)
-{
-	size_t	i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
-}
-
-static size_t	ft_calc_sz(char const *s1, char const *s2)
-{
-	size_t	size;
-
-	size = 0;
-	if (s1)
-		size += ft_strlen(s1);
-	if (s2)
-		size += ft_strlen(s2);
-	return (size + 1);
-}
-
 char	*ft_strjoin(char const *s1, char const *s2)
 {
 	size_t	i;
 	size_t	j;
 	char	*buff;
 
-	buff = malloc(sizeof(char) * (ft_calc_sz(s1, s2)));
+	i = 0;
+	j = 0;
+	while (s1 && s1[i])
+		i++;
+	while (s2 && s2[j])
+		j++;
+	buff = malloc(sizeof(char) * (i + j + 1));
 	if (!buff)
 		return (NULL);
 	i = 0;
@@ -61,27 +58,11 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (buff);
 }
 
-/*char *ft_substr_ptr(char const *start, char const *end)*/
-/*{*/
-/*	char *str;*/
-/*	int i;*/
-/**/
-/*	if (start > end || !start || !end)*/
-/*		return (NULL);*/
-/*	str = malloc(sizeof(char) * (end - start + 1));*/
-/*	if (!str)*/
-/*		return (NULL);*/
-/*	i = 0;*/
-/*	while (start <= end)*/
-/*		str[i++] = *(start++);*/
-/*	str[i] = '\0';*/
-/*	return (str);*/
-/*}*/
-char *ft_substr_ptr(char const *start, char const *end)
+char	*ft_substr_ptr(char const *start, char const *end)
 {
-	size_t len;
-	char *str;
-	size_t i;
+	size_t	len;
+	char	*str;
+	size_t	i;
 
 	if (!start || !end || end < start)
 		return (NULL);
