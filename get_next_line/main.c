@@ -6,14 +6,14 @@
 
 int main()
 {
-  int fd = open("./zen_of_python2.txt", O_RDONLY);
+  int fd = open("./zen_of_python.txt", O_RDONLY);
 
   char *line;
 
  int i = 0;
   while ((line = get_next_line(fd)))
   {
-    printf("%d: %s", i++, line);
+    printf("%s", line);
     free(line);
   }
 }
