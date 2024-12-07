@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: username <your@email.com>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 15:40:37 by username          #+#    #+#             */
-/*   Updated: 2024/12/06 23:44:37 by username         ###   ########.fr       */
+/*   Updated: 2024/12/07 21:38:38 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*extract_line(char **buffer)
 {
@@ -98,26 +98,26 @@ char	*read_file(int fd, char **buffer)
 
 char	*get_next_line(int fd)
 {
-	static char	*buffer;
+	static char	*buffer[1024];
 	size_t		i;
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > 2147483647)
 		return (NULL);
 	if (read(fd, 0, 0) == -1)
 	{
-		if (buffer)
-			free(buffer);
-		buffer = NULL;
+		if (buffer[fd])
+			free(buffer[fd]);
+		buffer[fd] = NULL;
 		return (NULL);
 	}
-	if (!buffer)
+	if (!buffer[fd])
 	{
-		buffer = malloc(sizeof(char) * BUFFER_SIZE + 1);
-		if (!buffer)
+		buffer[fd] = malloc(sizeof(char) * BUFFER_SIZE + 1);
+		if (!buffer[fd])
 			return (NULL);
 		i = 0;
 		while (i < (BUFFER_SIZE + 1))
-			buffer[i++] = '\0';
+			buffer[fd][i++] = '\0';
 	}
-	return (read_file(fd, &buffer));
+	return (read_file(fd, &buffer[fd]));
 }
