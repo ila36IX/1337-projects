@@ -1,13 +1,17 @@
-#include <sys/types.h>
-#include <sys/stat.h>
+#include "get_next_line.h"
 #include <fcntl.h>
 #include <stdio.h>
-#include "get_next_line.h"
+#include <sys/stat.h>
+#include <sys/types.h>
 
-int main()
+int	main(void)
 {
-  int fd = open("./zen_of_python2.txt", O_RDONLY);
+	int		fd;
+	int		fd2;
+	char	*null;
 
-  get_next_line(fd);
-
+	fd = open("./null", O_RDONLY);
+	fd2 = open("./null", O_RDONLY);
+	null = get_next_line(1);
+	free(null);
 }

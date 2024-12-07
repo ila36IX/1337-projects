@@ -12,19 +12,6 @@
 
 #include "get_next_line.h"
 
-char	*ft_strchr(const char *s, int c)
-{
-	while (*s)
-	{
-		if (*s == (char)c)
-			return ((char *)s);
-		s++;
-	}
-	if ((char)c == 0)
-		return ((char *)s);
-	return (NULL);
-}
-
 char	*extract_line(char **buffer)
 {
 	char	*line;
@@ -86,13 +73,15 @@ char	*read_more(int fd, char **buffer)
 		return (NULL);
 	}
 	reads = read(fd, temp_buffer, BUFFER_SIZE);
+	if (reads <= 0)
+		return (NULL);
 	return (handle_readed_chunck(buffer, reads, temp_buffer));
 }
 
-char *read_file(int fd, char **buffer)
+char	*read_file(int fd, char **buffer)
 {
-	char		*line;
-	char		*temp_buffer;
+	char	*line;
+	char	*temp_buffer;
 
 	while (1)
 	{
@@ -112,8 +101,7 @@ char *read_file(int fd, char **buffer)
 char	*get_next_line(int fd)
 {
 	static char	*buffer[1024];
-	size_t i;
-
+	size_t		i;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);

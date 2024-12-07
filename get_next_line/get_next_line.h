@@ -20,7 +20,7 @@ char	*ft_strdup(const char *src);
 size_t	ft_strlen(const char *s);
 char	*get_next_line(int fd);
 char	*ft_substr_ptr(char const *start, char const *end);
-char	*ft_strdup(const char *src);
+char	*ft_strchr(const char *s, int c);
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 69
 # endif
