@@ -89,29 +89,30 @@ char	*read_more(int fd, char **buffer)
 
 char	*get_next_line(int fd)
 {
-	static char	*buffer;
+	static char	*buffer[1024];
 	char		*line;
 	char		*temp_buffer;
 	size_t i;
 
+
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	if (!buffer)
+	if (!buffer[fd])
 	{
-		buffer = malloc(sizeof(char) * BUFFER_SIZE + 1);
-		if (!buffer)
+		buffer[fd] = malloc(sizeof(char) * BUFFER_SIZE + 1);
+		if (!buffer[fd])
 			return (NULL);
 		i = 0;
 		while (i < (BUFFER_SIZE + 1))
-			buffer[i++] = '\0';
+			buffer[fd][i++] = '\0';
 	}
 	while (1)
 	{
-		line = extract_line(&buffer);
+		line = extract_line(&buffer[fd]);
 		if (line)
 			return (line);
-		temp_buffer = read_more(fd, &buffer);
-		if (!temp_buffer && !buffer)
+		temp_buffer = read_more(fd, &buffer[fd]);
+		if (!temp_buffer && !buffer[fd])
 			return (NULL);
 		if (temp_buffer)
 			return (temp_buffer);
