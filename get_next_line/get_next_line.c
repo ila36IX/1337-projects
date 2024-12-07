@@ -73,8 +73,6 @@ char	*read_more(int fd, char **buffer)
 		return (NULL);
 	}
 	reads = read(fd, temp_buffer, BUFFER_SIZE);
-	if (reads < 0)
-		return (NULL);
 	return (handle_readed_chunck(buffer, reads, temp_buffer));
 }
 
