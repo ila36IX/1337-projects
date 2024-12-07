@@ -101,8 +101,15 @@ char	*get_next_line(int fd)
 	static char	*buffer[1024];
 	size_t		i;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > 2147483647)
 		return (NULL);
+	if (read(fd, 0, 0) == -1)
+	{
+		if (buffer[fd])
+			free(buffer[fd]);
+		buffer[fd] = NULL;
+		return (NULL);
+	}
 	if (!buffer[fd])
 	{
 		buffer[fd] = malloc(sizeof(char) * BUFFER_SIZE + 1);
