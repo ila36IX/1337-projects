@@ -8,18 +8,6 @@ int main()
 {
   int fd = open("./zen_of_python2.txt", O_RDONLY);
 
-  char *line;
+  get_next_line(fd);
 
-  int i = 0;
-  line = get_next_line(fd);
-  printf("%s", line);
-  free(line);
-  line = get_next_line(fd);
-  printf("%s", line);
-  free(line);
-  close(fd);
-  fd = open("./zen_of_python2.txt", O_RDONLY);
-  line = get_next_line(fd);
-  printf("%s", line);
-  free(line);
 }

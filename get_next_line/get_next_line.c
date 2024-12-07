@@ -31,6 +31,8 @@ char	*extract_line(char **buffer)
 	char	*temp_buffer;
 	char	*eol;
 
+	if (!*buffer)
+		return (NULL);
 	eol = ft_strchr(*buffer, '\n');
 	if (eol)
 	{
@@ -87,11 +89,29 @@ char	*read_more(int fd, char **buffer)
 	return (handle_readed_chunck(buffer, reads, temp_buffer));
 }
 
+char *read_file(int fd, char **buffer)
+{
+	char		*line;
+	char		*temp_buffer;
+
+	while (1)
+	{
+		line = extract_line(buffer);
+		if (line)
+			return (line);
+		temp_buffer = read_more(fd, buffer);
+		if (!temp_buffer && !buffer)
+			return (NULL);
+		if (!temp_buffer && !*buffer)
+			return (NULL);
+		if (temp_buffer)
+			return (temp_buffer);
+	}
+}
+
 char	*get_next_line(int fd)
 {
 	static char	*buffer[1024];
-	char		*line;
-	char		*temp_buffer;
 	size_t i;
 
 
@@ -106,15 +126,5 @@ char	*get_next_line(int fd)
 		while (i < (BUFFER_SIZE + 1))
 			buffer[fd][i++] = '\0';
 	}
-	while (1)
-	{
-		line = extract_line(&buffer[fd]);
-		if (line)
-			return (line);
-		temp_buffer = read_more(fd, &buffer[fd]);
-		if (!temp_buffer && !buffer[fd])
-			return (NULL);
-		if (temp_buffer)
-			return (temp_buffer);
-	}
+	return (read_file(fd, &buffer[fd]));
 }
