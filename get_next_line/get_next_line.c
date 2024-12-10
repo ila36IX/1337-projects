@@ -81,14 +81,12 @@ char	*read_file(int fd, char **buffer)
 	char	*line;
 	char	*temp_buffer;
 
-	while (1)
+	while (*buffer)
 	{
 		line = extract_line(buffer);
 		if (line)
 			return (line);
 		temp_buffer = read_more(fd, buffer);
-		if (!temp_buffer && !buffer)
-			return (NULL);
 		if (!temp_buffer && !*buffer)
 			return (NULL);
 		if (temp_buffer)
@@ -112,11 +110,11 @@ char	*get_next_line(int fd)
 	}
 	if (!buffer)
 	{
-		buffer = malloc(sizeof(char) * BUFFER_SIZE + 1);
+		buffer = malloc(sizeof(char) * (size_t)(BUFFER_SIZE + 1));
 		if (!buffer)
 			return (NULL);
 		i = 0;
-		while (i < (BUFFER_SIZE + 1))
+		while (i < (size_t)(BUFFER_SIZE + 1))
 			buffer[i++] = '\0';
 	}
 	return (read_file(fd, &buffer));
