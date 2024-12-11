@@ -55,20 +55,15 @@ char	*handle_readed_chunck(char **buffer, int reads, char *temp_buffer)
 	char	*line;
 	char	*new_buffer;
 
+	line = NULL;
 	if (reads <= 0)
 	{
-		if (*buffer && **buffer)
-		{
+		if (*buffer && **buffer && reads != -1)
 			line = ft_strdup(*buffer);
-			free(*buffer);
-			*buffer = NULL;
-			free(temp_buffer);
-			return (line);
-		}
 		free(temp_buffer);
 		free(*buffer);
 		*buffer = NULL;
-		return (NULL);
+		return (line);
 	}
 	new_buffer = ft_strjoin(*buffer, temp_buffer);
 	free(*buffer);
@@ -95,13 +90,11 @@ char	*read_more(int fd, char **buffer)
 
 char	*get_next_line(int fd)
 {
-	static char	*buffer[1024];
+	static char	*buffer[2048];
 	char		*line;
 	char		*temp_buffer;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > INT_MAX)
-		return (NULL);
-	if (fd >= 1024)
+	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > INT_MAX || fd >= 2048)
 		return (NULL);
 	if (!buffer[fd])
 		buffer[fd] = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
