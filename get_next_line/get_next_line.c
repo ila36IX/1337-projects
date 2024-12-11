@@ -12,6 +12,24 @@
 
 #include "get_next_line.h"
 
+void	*ft_calloc(size_t num, size_t size)
+{
+	void	*buff;
+	size_t	n;
+	size_t	i;
+
+	if (size && num > SIZE_MAX / size)
+		return (NULL);
+	n = num * size;
+	buff = malloc(n);
+	if (!buff)
+		return (NULL);
+	i = 0;
+	while (i < n)
+		((char *)buff)[i++] = 0;
+	return (buff);
+}
+
 char	*extract_line(char **buffer)
 {
 	char	*line;
@@ -52,7 +70,6 @@ char	*handle_readed_chunck(char **buffer, int reads, char *temp_buffer)
 		*buffer = NULL;
 		return (NULL);
 	}
-	temp_buffer[reads] = '\0';
 	new_buffer = ft_strjoin(*buffer, temp_buffer);
 	free(*buffer);
 	free(temp_buffer);
@@ -65,7 +82,7 @@ char	*read_more(int fd, char **buffer)
 	char	*temp_buffer;
 	int		reads;
 
-	temp_buffer = malloc(BUFFER_SIZE + 1);
+	temp_buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!temp_buffer)
 	{
 		free(*buffer);
@@ -76,46 +93,24 @@ char	*read_more(int fd, char **buffer)
 	return (handle_readed_chunck(buffer, reads, temp_buffer));
 }
 
-char	*read_file(int fd, char **buffer)
-{
-	char	*line;
-	char	*temp_buffer;
-
-	while (*buffer)
-	{
-		line = extract_line(buffer);
-		if (line)
-			return (line);
-		temp_buffer = read_more(fd, buffer);
-		if (!temp_buffer && !*buffer)
-			return (NULL);
-		if (temp_buffer)
-			return (temp_buffer);
-	}
-}
-
 char	*get_next_line(int fd)
 {
 	static char	*buffer;
-	size_t		i;
+	char		*line;
+	char		*temp_buffer;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > 2147483647)
+	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > INT_MAX)
 		return (NULL);
-	if (read(fd, 0, 0) == -1)
-	{
-		if (buffer)
-			free(buffer);
-		buffer = NULL;
-		return (NULL);
-	}
 	if (!buffer)
+		buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	while (buffer)
 	{
-		buffer = malloc(sizeof(char) * (size_t)(BUFFER_SIZE + 1));
-		if (!buffer)
-			return (NULL);
-		i = 0;
-		while (i < (size_t)(BUFFER_SIZE + 1))
-			buffer[i++] = '\0';
+		line = extract_line(&buffer);
+		if (line)
+			return (line);
+		temp_buffer = read_more(fd, &buffer);
+		if (temp_buffer)
+			return (temp_buffer);
 	}
-	return (read_file(fd, &buffer));
+	return (NULL);
 }

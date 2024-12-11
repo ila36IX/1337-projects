@@ -12,6 +12,8 @@
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
+# include <limits.h>
+# include <stdint.h>
 # include <stdlib.h>
 # include <unistd.h>
 
@@ -22,6 +24,6 @@ char	*get_next_line(int fd);
 char	*ft_substr_ptr(char const *start, char const *end);
 char	*ft_strchr(const char *s, int c);
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 69
+#  define BUFFER_SIZE 1024
 # endif
 #endif
