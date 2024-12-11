@@ -1,0 +1,5 @@
+[1;31mError[0m in test 3: [0;36mget_next_line(5: "read_error.txt")[0m: expected: <NULL>, got: "cccccccc"
+[0;33mProbable reason[0m: You should clear the static buffer when a call to read returns -1
+[1;31mError[0m in test 9: [0;36mget_next_line(5: "read_error.txt")[0m: 
+Memory leak: 0x39a6ae0 - 4096 bytes
+You failed to free the memory allocated at:
