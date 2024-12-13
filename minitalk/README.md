@@ -1,6 +1,6 @@
 # minitalk
 
-[Imgur](https://i.imgur.com/5KJF2zM.png)
+![Imgur](https://i.imgur.com/5KJF2zM.png)
 
 ## Overview
 Minitalk is a Small data exchange program that transmits text between a client and server program using UNIX signals.
