@@ -69,7 +69,7 @@ void handle_ackn(int signo, siginfo_t *info, void *context)
 	if (signo == SIGUSR2)
 	{
 		printf("Server acknowledges\n");
-		exit(1);
+		exit(0);
 	}
 }
 

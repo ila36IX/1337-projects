@@ -26,23 +26,23 @@ t_stream *payload = NULL;
 #define BIT_INDEX (payload->bit_i)
 #define CURR_CHAR ((payload->s)[payload->byte_i])
 #define STREAM (payload->s)
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 9
 
-void wr_next_byte()
+void next_byte()
 {
 	BIT_INDEX = 0;
 	if (!CURR_CHAR)
 	{
-		printf("%s\n", STREAM);
-		BIT_INDEX = 0;
+		printf("%s", STREAM);
 		BYTE_INDEX = 0;
 		bzero(STREAM, BUFFER_SIZE);
 		kill(payload->sender_pid, SIGUSR2);
+		return ;
 	}
 	BYTE_INDEX++;
 	if (BYTE_INDEX % (BUFFER_SIZE - 1) == 0)
 	{
-		printf("%s\n", STREAM);
+		printf("%s", STREAM);
 		bzero(STREAM, BUFFER_SIZE);
 		BYTE_INDEX = 0;
 	}
@@ -52,7 +52,7 @@ void	process_bit(char bit)
 {
 	CURR_CHAR = (CURR_CHAR << 1) | bit;
 	if (BIT_INDEX == 7)
-		wr_next_byte();
+		next_byte();
 	else
 		BIT_INDEX++;
 }
