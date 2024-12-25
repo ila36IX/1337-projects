@@ -1,65 +1,89 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <strings.h>
 #include <unistd.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <string.h>
+
 /*
  * 0xxxxxxx
  * 110xxxxx 10xxxxxx
  * 1110xxxx 10xxxxxx 10xxxxxx
  * 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
- * */
+ **/
 
-struct shared_data {
-	char o;
-	int n;
-};
+typedef struct shared_data {
+	char *s;
+	int byte_i;
+	int bit_i;
+	int sender_pid;
+} t_stream;
 
-struct shared_data *shared_mem = NULL;
+t_stream *payload = NULL;
 
+#define BYTE_INDEX (payload->byte_i)
+#define BIT_INDEX (payload->bit_i)
+#define CURR_CHAR ((payload->s)[payload->byte_i])
+#define STREAM (payload->s)
+#define BUFFER_SIZE 1024
 
-void handle_siguser1(int n)
+void wr_next_byte()
 {
-	shared_mem->o = (shared_mem->o << 1) | 0;
-	(shared_mem->n)++;
-	if (shared_mem->n == 8)
+	BIT_INDEX = 0;
+	if (!CURR_CHAR)
 	{
-		printf("%c", shared_mem->o);
-		shared_mem->n = 0;
+		printf("%s\n", STREAM);
+		BIT_INDEX = 0;
+		BYTE_INDEX = 0;
+		bzero(STREAM, BUFFER_SIZE);
+		kill(payload->sender_pid, SIGUSR2);
+	}
+	BYTE_INDEX++;
+	if (BYTE_INDEX % (BUFFER_SIZE - 1) == 0)
+	{
+		printf("%s\n", STREAM);
+		bzero(STREAM, BUFFER_SIZE);
+		BYTE_INDEX = 0;
 	}
 }
 
-void handle_siguser2(int n)
-{ 
-	shared_mem->o = (shared_mem->o << 1) | 1;
-	(shared_mem->n)++;
-	if (shared_mem->n == 8)
-	{
-		printf("%c", shared_mem->o);
-		shared_mem->n = 0;
-	}
+void	process_bit(char bit)
+{
+	CURR_CHAR = (CURR_CHAR << 1) | bit;
+	if (BIT_INDEX == 7)
+		wr_next_byte();
+	else
+		BIT_INDEX++;
+}
+
+void handle_bit(int signo, siginfo_t *info, void *context) 
+{
+	pid_t sender_pid;
+
+	sender_pid = info->si_pid;
+	payload->sender_pid = sender_pid;
+	process_bit(signo == SIGUSR2);
+	kill(sender_pid, SIGUSR1);
 }
 
 int main()
 {
-	int pid;
-	struct sigaction sa1 = {0};
-	struct sigaction sa2 = {0};
-	struct shared_data s = {0};
+	pid_t	pid;
+	t_stream s = {0};
+	struct sigaction sa = {0};
 
-	sa1.sa_handler = handle_siguser1;
-	sigaction(SIGUSR1, &sa1, NULL);
+	payload = &s;
+	sa.sa_sigaction = handle_bit;
+	sa.sa_flags = SA_SIGINFO;
+	sigaction(SIGUSR1, &sa, NULL);
+	sigaction(SIGUSR2, &sa, NULL);
 
-	sa2.sa_handler = handle_siguser2;
-	sigaction(SIGUSR2, &sa2, NULL);
-
-	shared_mem = &s;
 	pid = getpid();
 	printf("PID [%d]\n", pid);
+	STREAM = calloc(BUFFER_SIZE, sizeof(char));
 	while (1)
-	{
 		pause();
-	}
 	return (0);
 }
 
