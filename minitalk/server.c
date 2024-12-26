@@ -1,10 +1,17 @@
-#include <stdio.h>
-#include <stdlib.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/25 19:04:41 by aljbari           #+#    #+#             */
+/*   Updated: 2024/12/25 19:53:21 by aljbari          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "server.h"
 #include <strings.h>
-#include <unistd.h>
-#include <signal.h>
-#include <sys/wait.h>
-#include <string.h>
 
 /*
  * 0xxxxxxx
@@ -13,77 +20,70 @@
  * 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
  **/
 
-typedef struct shared_data {
-	char *s;
-	int byte_i;
-	int bit_i;
-	int sender_pid;
-} t_stream;
+t_stream	*g_payload;
 
-t_stream *payload = NULL;
-
-#define BYTE_INDEX (payload->byte_i)
-#define BIT_INDEX (payload->bit_i)
-#define CURR_CHAR ((payload->s)[payload->byte_i])
-#define STREAM (payload->s)
-#define BUFFER_SIZE 9
-
-void next_byte()
+void	next_byte(void)
 {
-	BIT_INDEX = 0;
-	if (!CURR_CHAR)
+	char	curr_char;
+
+	curr_char = (g_payload->s)[g_payload->byte_i];
+	g_payload->bit_i = 0;
+	if (!curr_char)
 	{
-		printf("%s", STREAM);
-		BYTE_INDEX = 0;
-		bzero(STREAM, BUFFER_SIZE);
-		kill(payload->sender_pid, SIGUSR2);
+		printf("%s\n", g_payload->s);
+		g_payload->byte_i = 0;
+		bzero(g_payload->s, BUFFER_SIZE);
+		kill(g_payload->sender_pid, SIGUSR2);
 		return ;
 	}
-	BYTE_INDEX++;
-	if (BYTE_INDEX % (BUFFER_SIZE - 1) == 0)
+	(g_payload->byte_i)++;
+	if (g_payload->byte_i % (BUFFER_SIZE - 1) == 0)
 	{
-		printf("%s", STREAM);
-		bzero(STREAM, BUFFER_SIZE);
-		BYTE_INDEX = 0;
+		printf("%s\n", g_payload->s);
+		bzero(g_payload->s, BUFFER_SIZE);
+		g_payload->byte_i = 0;
 	}
 }
 
 void	process_bit(char bit)
 {
-	CURR_CHAR = (CURR_CHAR << 1) | bit;
-	if (BIT_INDEX == 7)
+	char	curr_char;
+
+	curr_char = (g_payload->s)[g_payload->byte_i];
+	(g_payload->s)[g_payload->byte_i] = (curr_char << 1) | bit;
+	if (g_payload->bit_i == 7)
 		next_byte();
 	else
-		BIT_INDEX++;
+		(g_payload->bit_i)++;
 }
 
-void handle_bit(int signo, siginfo_t *info, void *context) 
+void	handle_bit(int signo, siginfo_t *info, void *context)
 {
-	pid_t sender_pid;
+	pid_t	sender_pid;
 
 	sender_pid = info->si_pid;
-	payload->sender_pid = sender_pid;
+	g_payload->sender_pid = sender_pid;
 	process_bit(signo == SIGUSR2);
 	kill(sender_pid, SIGUSR1);
 }
 
-int main()
+int	main(void)
 {
-	pid_t	pid;
-	t_stream s = {0};
-	struct sigaction sa = {0};
+	pid_t				pid;
+	t_stream			s;
+	struct sigaction	sa;
 
-	payload = &s;
+	bzero(&sa, sizeof(sa));
+	bzero(&s, sizeof(s));
+	g_payload = &s;
 	sa.sa_sigaction = handle_bit;
 	sa.sa_flags = SA_SIGINFO;
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
-
 	pid = getpid();
 	printf("PID [%d]\n", pid);
-	STREAM = calloc(BUFFER_SIZE, sizeof(char));
+	g_payload->s = calloc(BUFFER_SIZE, sizeof(char));
 	while (1)
 		pause();
 	return (0);
 }
-
