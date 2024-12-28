@@ -6,12 +6,11 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/25 19:04:41 by aljbari           #+#    #+#             */
-/*   Updated: 2024/12/25 19:53:21 by aljbari          ###   ########.fr       */
+/*   Updated: 2024/12/28 14:43:18 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.h"
-#include <strings.h>
 
 /*
  * 0xxxxxxx
@@ -30,17 +29,17 @@ void	next_byte(void)
 	g_payload->bit_i = 0;
 	if (!curr_char)
 	{
-		printf("%s\n", g_payload->s);
+		ft_printf("%s\n", g_payload->s);
 		g_payload->byte_i = 0;
-		bzero(g_payload->s, BUFFER_SIZE);
+		ft_bzero(g_payload->s, BUFFER_SIZE);
 		kill(g_payload->sender_pid, SIGUSR2);
 		return ;
 	}
 	(g_payload->byte_i)++;
 	if (g_payload->byte_i % (BUFFER_SIZE - 1) == 0)
 	{
-		printf("%s\n", g_payload->s);
-		bzero(g_payload->s, BUFFER_SIZE);
+		ft_printf("%s", g_payload->s);
+		ft_bzero(g_payload->s, BUFFER_SIZE);
 		g_payload->byte_i = 0;
 	}
 }
@@ -61,6 +60,7 @@ void	handle_bit(int signo, siginfo_t *info, void *context)
 {
 	pid_t	sender_pid;
 
+	(void)context;
 	sender_pid = info->si_pid;
 	g_payload->sender_pid = sender_pid;
 	process_bit(signo == SIGUSR2);
@@ -73,16 +73,16 @@ int	main(void)
 	t_stream			s;
 	struct sigaction	sa;
 
-	bzero(&sa, sizeof(sa));
-	bzero(&s, sizeof(s));
+	ft_bzero(&sa, sizeof(sa));
+	ft_bzero(&s, sizeof(s));
 	g_payload = &s;
 	sa.sa_sigaction = handle_bit;
 	sa.sa_flags = SA_SIGINFO;
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
 	pid = getpid();
-	printf("PID [%d]\n", pid);
-	g_payload->s = calloc(BUFFER_SIZE, sizeof(char));
+	ft_printf("PID [%d]\n", pid);
+	g_payload->s = ft_calloc(BUFFER_SIZE, sizeof(char));
 	while (1)
 		pause();
 	return (0);

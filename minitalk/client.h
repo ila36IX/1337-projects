@@ -12,12 +12,12 @@
 
 #ifndef CLIENT_H
 # define CLIENT_H
+
+# include "libft/libft.h"
 # include <signal.h>
-# include <stdio.h>
 # include <stdlib.h>
 # include <sys/wait.h>
 # include <unistd.h>
-# include <string.h>
 
 # define TIMEOUT_DELAY 1000000
 # define QUEUE_DELAY 50

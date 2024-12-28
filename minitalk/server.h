@@ -10,13 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <strings.h>
-#include <sys/wait.h>
-#include <unistd.h>
+#ifndef SERVER_H
+# define SERVER_H
+
+# include "libft/libft.h"
+# include <signal.h>
 
 typedef struct shared_data
 {
@@ -26,4 +24,6 @@ typedef struct shared_data
 	int		sender_pid;
 }			t_stream;
 
-#define BUFFER_SIZE 1024
+# define BUFFER_SIZE 1024
+
+#endif

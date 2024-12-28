@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/25 18:59:36 by aljbari           #+#    #+#             */
-/*   Updated: 2024/12/25 19:53:22 by aljbari          ###   ########.fr       */
+/*   Updated: 2024/12/28 16:41:22 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,10 @@ void	send_bit(int pid, int sig)
 		}
 		if (g_ackn_recieved)
 			return ;
-		printf("No response; Retry: %d/%d\n", RETRIES + 1 - retries, RETRIES);
+		ft_printf("Retry: %d/%d\n", RETRIES + 1 - retries, RETRIES);
 		retries--;
 	}
-	printf("\n\nServer is not responding;\n");
+	ft_printf("\n\nServer is not responding;\n");
 	exit(1);
 }
 
@@ -67,11 +67,13 @@ void	stream_string(char *s, int pid)
 
 void	handle_ackn(int signo, siginfo_t *info, void *context)
 {
+	(void)info;
+	(void)context;
 	if (signo == SIGUSR1)
 		g_ackn_recieved = 1;
 	if (signo == SIGUSR2)
 	{
-		printf("Server acknowledges\n");
+		ft_printf("Server acknowledges\n");
 		exit(0);
 	}
 }
@@ -81,23 +83,23 @@ int	main(int ac, char **av)
 	int					pid;
 	struct sigaction	sa;
 
-	bzero(&sa, sizeof(sa));
+	ft_bzero(&sa, sizeof(sa));
 	sa.sa_sigaction = handle_ackn;
 	sa.sa_flags = SA_SIGINFO;
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
 	if (ac != 3)
 	{
-		printf("Usage: <PID> <message>\n");
+		ft_printf("Usage: <PID> <message>\n");
 		return (1);
 	}
 	pid = atoi(av[1]);
 	if (pid == 0)
 	{
-		printf("Error: zero or unvalid PID\n");
+		ft_printf("Error: zero or unvalid PID\n");
 		return (1);
 	}
-	printf("%d\n", pid);
+	ft_printf("%d\n", pid);
 	stream_string(av[2], pid);
 	return (0);
 }
