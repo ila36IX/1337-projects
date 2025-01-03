@@ -50,3 +50,9 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Ignore all libft directories
+**/libft/
+
+# Un-ignore libft in the root directory
+!/libft/
