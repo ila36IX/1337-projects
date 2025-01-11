@@ -1,9 +1,9 @@
 #include "libft/libft.h"
-#include <bits/types/stack_t.h>
+#include "libft/printf/ft_printf.h"
 #include <stdio.h>
 
 
-#define PRINT_DEBUG 1
+#define PRINT_DEBUG 0
 
 void print_ints(int *arr, size_t size);
 void swap(int* a, int* b);
@@ -226,6 +226,7 @@ void swap_ab(t_stack *a, t_stack *b)
 void _rotate(t_stack *stack)
 {
 	t_list *prv_head;
+
 	if (!(stack->head) || !(stack->head->next))
 		return ;
 	prv_head = stack->head;
@@ -252,6 +253,55 @@ void rotate_ab(t_stack *a, t_stack *b)
 	_rotate(a);
 	_rotate(b);
 	printf("rr\n");
+}
+
+void _reverse(t_stack *a)
+{
+	t_list *prev = NULL;
+	t_list *current = a->head;
+	t_list *next = NULL;
+
+	while (current != NULL)
+	{
+		next = current->next;
+		current->next = prev;
+		prev = current;
+		current = next;
+	}
+	next = a->head;
+	a->head = prev;
+	a->tail = next;
+}
+
+void reverse_a(t_stack *stack)
+{
+	_reverse(stack);
+	ft_printf("rra\n");
+}
+
+void reverse_b(t_stack *stack)
+{
+	_reverse(stack);
+	ft_printf("rrb\n");
+}
+
+void reverse_ab(t_stack *a, t_stack *b)
+{
+	_reverse(a);
+	_reverse(b);
+	ft_printf("rrr\n");
+}
+void async_sort(t_stack *a, t_stack *b)
+{
+	int i;
+
+	i = a->size / 2;
+
+	while (i > 0)
+	{
+		push_b(a, b);
+		i--;
+	}
 }
 
 void print_ab(t_stack *a, t_stack *b)
@@ -317,18 +367,6 @@ void bf(t_stack *a, t_stack *b, int i)
 	}
 }
 
-void async_sort(t_stack *a, t_stack *b)
-{
-	int i;
-
-	i = a->size / 2;
-
-	while (i > 0)
-	{
-		push_b(a, b);
-		i--;
-	}
-}
 
 void simple_way(t_stack *a, t_stack *b)
 {
@@ -387,37 +425,89 @@ int is_bigger(t_list *a, t_list *b)
 	return (0);
 }
 
-void sorting(t_stack *a, t_stack *b)
+int get_max_bits(t_stack *stack)
 {
-	int sorted = 0;
-	int a_sorted;
-	int b_sorted;
+	int max;
+	int max_bits;
 
-	while (sorted)
+	max = stack->size - 1;
+	max_bits = 0;
+	while(max > 0)
 	{
-		if (!a_sorted && !b_sorted)
-		{
-			if (!is_bigger(a->head, a->head->next) && !is_bigger(b->head, b->head->next))
-			{
-				swap_a(a);
-				(a);
-			}
-			if (is_bigger(a->head, a->head->next) && is_bigger(b->head, b->head->next))
-			{
-				rotate_a(a);
-			}
-			if (is_bigger(a->head, a->head->next) && !is_bigger(b->head, b->head->next))
-				rotate_ab(a, b);
-		}
-		a_sorted = is_sorted19(a);
-		b_sorted = is_sorted91(b);
+		max >>= 1;
+		max_bits++;
 	}
+	return (max_bits);
+}
+
+int get_bit(int value, int index)
+{
+	 return ((value >> index) & 1);
+}
+
+int get_value(t_list *node)
+{
+	int *content;
+
+	content = node->content;
+	return (*content);
+}
+
+
+void radix_move(t_stack *a, t_stack *b, int bit_index)
+{
+	t_list *walk, *curr_node;
+	int i;
+	int stack_size;
+
+	walk = a->head;
+	i = 0;
+	stack_size = a->size;
+	while (i < stack_size && walk)
+	{
+		curr_node = walk;
+		walk = walk->next;
+		printf("[bit] %d[%d] = %d\n", get_value(curr_node), bit_index, get_bit(get_value(curr_node), bit_index));
+		if (get_bit(get_value(curr_node), bit_index))
+			push_b(a, b);
+		else
+			rotate_a(a);
+		i++;
+	}
+}
+
+void push_all_b_to_a(t_stack *a, t_stack *b)
+{
+	int i;
+	int stack_size;
+
+	i = 0;
+	stack_size = b->size;
+	while (i < stack_size)
+	{
+		push_a(a, b);
+		i++;
+	}
+
+}
+
+void radix_step(t_stack *a, t_stack *b, int i)
+{
+	radix_move(a, b, i);
+
+	print_ab(a, b);
+	reverse_ab(a, b);
+	push_all_b_to_a(a, b);
+	print_ab(a, b);
+	reverse_a(a);
+	print_ab(a, b);
 }
 
 int main(int ac, char **av)
 {		
 	t_stack stack_a, stack_b;
 	size_t size;
+	/*int bits_count;*/
 
 	size = ac - 1;
 	stack_a.head = arr_to_list(&av[1], size);;
@@ -433,11 +523,13 @@ int main(int ac, char **av)
 	print_ab(&stack_a, &stack_b);
 	// ft_printf("--------------------------\n");
 
-	async_sort(&stack_a, &stack_b);
-	ft_printf("[a] sorted? %s\n", is_sorted19(&stack_a) ? "Yes" : "No");
-
-	// ft_printf("---------- after ----------\n");
-	print_ab(&stack_a, &stack_b);
+	int bits_count = get_max_bits(&stack_a);
+	int i = 0;
+	while (i < bits_count)
+	{
+		radix_step(&stack_a, &stack_b, i);
+		i++;
+	}
 	// ft_printf("---------------_-----------\n");
 	ft_lstclear(&stack_a.head, free);
 }
