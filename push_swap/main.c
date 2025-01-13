@@ -166,12 +166,13 @@ void push_a(t_stack *stack_a, t_stack *stack_b)
 
 	if (!stack_b->head)
 		return ;
-
 	tmp = stack_b->head;
 	stack_b->head = stack_b->head->next;
 	(stack_b->size)--;
 	tmp->next = stack_a->head;
 	stack_a->head = tmp;
+	if (!stack_a->tail)
+		stack_a->tail = stack_a->head;
 	(stack_a->size)++;
 	printf("pa\n");
 }
@@ -188,6 +189,8 @@ void push_b(t_stack *stack_a, t_stack *stack_b)
 	(stack_a->size)--;
 	tmp->next = stack_b->head;
 	stack_b->head = tmp;
+	if (!stack_b->tail)
+		stack_b->tail = stack_b->head;
 	(stack_b->size)++;
 	printf("pb\n");
 }
@@ -227,7 +230,7 @@ void _rotate(t_stack *stack)
 {
 	t_list *prv_head;
 
-	if (!(stack->head) || !(stack->head->next))
+	if (!(stack->tail) || (stack->tail == stack->head))
 		return ;
 	prv_head = stack->head;
 	stack->tail->next = prv_head;
@@ -255,54 +258,43 @@ void rotate_ab(t_stack *a, t_stack *b)
 	printf("rr\n");
 }
 
-void _reverse(t_stack *a)
+void _rev_rotate(t_stack *stack)
 {
-	t_list *prev = NULL;
-	t_list *current = a->head;
-	t_list *next = NULL;
-
-	while (current != NULL)
-	{
-		next = current->next;
-		current->next = prev;
-		prev = current;
-		current = next;
-	}
-	next = a->head;
-	a->head = prev;
-	a->tail = next;
+    t_list *new_head;
+    
+    if (!(stack->head) || !(stack->head->next))
+        return;
+    if (!(stack->tail))
+        return;
+    new_head = stack->tail;
+    t_list *current = stack->head;
+    while (current->next != stack->tail)
+        current = current->next;
+    new_head->next = stack->head;    
+    stack->head = new_head;          
+    stack->tail = current;           
+    stack->tail->next = NULL;       
 }
 
-void reverse_a(t_stack *stack)
+void rev_rotate_a(t_stack *a)
 {
-	_reverse(stack);
+	_rev_rotate(a);
 	ft_printf("rra\n");
 }
 
-void reverse_b(t_stack *stack)
+void rev_rotate_b(t_stack *b)
 {
-	_reverse(stack);
+	_rev_rotate(b);
 	ft_printf("rrb\n");
 }
 
-void reverse_ab(t_stack *a, t_stack *b)
+void rev_rotate_ab(t_stack *a, t_stack *b)
 {
-	_reverse(a);
-	_reverse(b);
+	_rev_rotate(a);
+	_rev_rotate(b);
 	ft_printf("rrr\n");
 }
-void async_sort(t_stack *a, t_stack *b)
-{
-	int i;
 
-	i = a->size / 2;
-
-	while (i > 0)
-	{
-		push_b(a, b);
-		i--;
-	}
-}
 
 void print_ab(t_stack *a, t_stack *b)
 {
@@ -340,50 +332,6 @@ void print_ab(t_stack *a, t_stack *b)
 	ft_printf("%10s%10s\n\n", "a", "b");
 }
 
-
-void bf(t_stack *a, t_stack *b, int i)
-{
-	t_list *w;	
-	int value;
-	int a_size = a->size;
-	int j = a_size;
-
-	w = a->head;
-	// ft_printf("pushing %d to stack b\n", i);
-	while (j > 0)
-	{
-		value = *((int *)(w->content));
-		w = w->next;
-		if (i == value)
-		{
-			push_b(a, b);
-			print_ab(a, b);
-			return ;
-		}
-		else
-			rotate_a(a);
-		j--;
-		print_ab(a, b);
-	}
-}
-
-
-void simple_way(t_stack *a, t_stack *b)
-{
-	int i;
-	int size;
-
-	size = a->size;
-	i = 0;
-	while (i < size)
-		bf(a, b, i++);
-	i = 0;
-	while (i < size)
-	{
-		push_a(a, b);
-		i++;
-	}
-}
 
 int	is_sorted19(t_stack *stack)
 {
@@ -454,6 +402,41 @@ int get_value(t_list *node)
 }
 
 
+int many_operations(t_stack *b, int value)
+{
+	t_list *walk;
+	int i;
+
+	walk = b->head;
+	if (get_value(walk) > value)
+		return (1);
+	i = 1;
+	printf("Pushing %d\n", value);
+	while(walk)
+	{
+		if (!walk->next)
+			return (-1);
+		printf("is %d between %d and %d?\n", value, get_value(walk), get_value(walk->next));
+		if (get_value(walk) < value && get_value(walk->next) > value)
+				return (i);
+		i++;
+		walk = walk->next;
+	}
+	return (i);
+
+}
+
+/**
+ * radix_move - all integets with 0 in i-th bit will be moves to b
+ * and the one with 1 will remain in a
+ *
+ * @a: stack a, in the end will contain all the integers with bit
+ * in  @bit_index = 1
+ * @b: stack b: in the end will contain all the integers with bit
+ * in @bit_index = 0
+ *
+ * Return: Nothing
+ */
 void radix_move(t_stack *a, t_stack *b, int bit_index)
 {
 	t_list *walk, *curr_node;
@@ -467,8 +450,7 @@ void radix_move(t_stack *a, t_stack *b, int bit_index)
 	{
 		curr_node = walk;
 		walk = walk->next;
-		printf("[bit] %d[%d] = %d\n", get_value(curr_node), bit_index, get_bit(get_value(curr_node), bit_index));
-		if (get_bit(get_value(curr_node), bit_index))
+		if (get_bit(get_value(curr_node), bit_index) == 0)
 			push_b(a, b);
 		else
 			rotate_a(a);
@@ -493,14 +475,23 @@ void push_all_b_to_a(t_stack *a, t_stack *b)
 
 void radix_step(t_stack *a, t_stack *b, int i)
 {
+	// update needed
 	radix_move(a, b, i);
-
-	print_ab(a, b);
-	reverse_ab(a, b);
 	push_all_b_to_a(a, b);
-	print_ab(a, b);
-	reverse_a(a);
-	print_ab(a, b);
+}
+
+void main_helper(t_stack *a, t_stack *b)
+{
+	int bits_count = get_max_bits(a);
+	int i = 0;
+
+	while (i < bits_count)
+	{
+		radix_step(a, b, i);
+		print_ab(a, b);
+		i++;
+	}
+
 }
 
 int main(int ac, char **av)
@@ -519,17 +510,8 @@ int main(int ac, char **av)
 	stack_b.tail = NULL;
 	stack_b.size = 0;
 
-	// ft_printf("---------- init ----------\n");
 	print_ab(&stack_a, &stack_b);
-	// ft_printf("--------------------------\n");
-
-	int bits_count = get_max_bits(&stack_a);
-	int i = 0;
-	while (i < bits_count)
-	{
-		radix_step(&stack_a, &stack_b, i);
-		i++;
-	}
-	// ft_printf("---------------_-----------\n");
+	main_helper(&stack_a, &stack_b);
+	print_ab(&stack_a, &stack_b);
 	ft_lstclear(&stack_a.head, free);
 }
