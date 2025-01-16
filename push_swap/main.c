@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 
-#define PRINT_DEBUG 0
+#define PRINT_DEBUG 1
 
 void print_ints(int *arr, size_t size);
 void swap(int* a, int* b);
@@ -22,7 +22,6 @@ int partition(int *arr, int low, int high)
 	swap(&arr[i + 1], &arr[high]);  
 	return i + 1;
 }
-
 void quick_sort(int *arr, int low, int high)
 {
 	if (low < high)
@@ -450,7 +449,7 @@ void radix_move(t_stack *a, t_stack *b, int bit_index)
 	{
 		curr_node = walk;
 		walk = walk->next;
-		if (get_bit(get_value(curr_node), bit_index) == 0)
+		if ((get_bit(get_value(curr_node), bit_index) == 0))
 			push_b(a, b);
 		else
 			rotate_a(a);
@@ -477,10 +476,12 @@ void radix_step(t_stack *a, t_stack *b, int i)
 {
 	// update needed
 	radix_move(a, b, i);
+	print_ab(a, b);
 	push_all_b_to_a(a, b);
+	print_ab(a, b);
 }
 
-void main_helper(t_stack *a, t_stack *b)
+void radix(t_stack *a, t_stack *b)
 {
 	int bits_count = get_max_bits(a);
 	int i = 0;
@@ -490,6 +491,45 @@ void main_helper(t_stack *a, t_stack *b)
 		radix_step(a, b, i);
 		print_ab(a, b);
 		i++;
+	}
+
+}
+
+int best_push_b(t_stack *b, int value)
+{
+	t_list *walk;
+	int n1, n2, i;
+
+	walk = b->head;
+	i = 0;
+	while (walk)
+	{
+		n1 = get_value(walk);
+		if (walk->next)
+			n2 = get_value(walk->next);
+		if (n1 > value && n2 < value)
+			return (i);
+		walk = walk->next;
+		i++;
+	}
+	return (-1);
+
+}
+
+
+void best_fit(t_stack *a, t_stack *b)
+{
+	int value;
+	t_list *walk;
+	t_list *curr;
+
+	walk = a->head;
+	while (walk)
+	{
+		curr = walk;
+		walk = walk->next;
+		value = get_value(curr);
+		best_push_b(b, value);
 	}
 
 }
@@ -511,7 +551,7 @@ int main(int ac, char **av)
 	stack_b.size = 0;
 
 	print_ab(&stack_a, &stack_b);
-	main_helper(&stack_a, &stack_b);
+	radix(&stack_a, &stack_b);
 	print_ab(&stack_a, &stack_b);
 	ft_lstclear(&stack_a.head, free);
 }
