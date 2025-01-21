@@ -1,9 +1,14 @@
 #include "libft/libft.h"
 #include "libft/printf/ft_printf.h"
+#include <bits/types/stack_t.h>
 #include <stdio.h>
 
 
-#define PRINT_DEBUG 1
+#define PRINT_DEBUG 0
+typedef struct t_stack_ {
+	t_list *head;
+	t_list *tail;
+	int size; } t_stack;
 
 void print_ints(int *arr, size_t size);
 void swap(int* a, int* b);
@@ -20,8 +25,9 @@ int partition(int *arr, int low, int high)
 		}
 	}
 	swap(&arr[i + 1], &arr[high]);  
-	return i + 1;
+	return (i + 1);
 }
+
 void quick_sort(int *arr, int low, int high)
 {
 	if (low < high)
@@ -153,11 +159,6 @@ void print_ints(int *arr, size_t size)
 	ft_printf("      _____\n");
 }
 
-typedef struct t_stack_ {
-	t_list *head;
-	t_list *tail;
-	size_t size;
-} t_stack;
 
 void push_a(t_stack *stack_a, t_stack *stack_b)
 {
@@ -208,13 +209,13 @@ void _swap(t_stack *stack)
 void swap_a(t_stack *stack)
 {
 	_swap(stack);
-	printf("sa");
+	printf("sa\n");
 }
 
 void swap_b(t_stack *stack)
 {
 	_swap(stack);
-	printf("sb");
+	printf("sb\n");
 
 }
 
@@ -222,7 +223,7 @@ void swap_ab(t_stack *a, t_stack *b)
 {
 	_swap(a);
 	_swap(b);
-	printf("ss");
+	printf("ss\n");
 }
 
 void _rotate(t_stack *stack)
@@ -501,14 +502,22 @@ int best_push_b(t_stack *b, int value)
 	int n1, n2, i;
 
 	walk = b->head;
-	i = 0;
+	if (get_value(walk) < value)
+		return (1);
+	i = 2;
 	while (walk)
 	{
 		n1 = get_value(walk);
 		if (walk->next)
 			n2 = get_value(walk->next);
-		if (n1 > value && n2 < value)
+		// printf("(%d %d) ? %d\n", n1, n2, value);
+		if (n1 > value && value > n2)
+		{
+			// printf("Found here %d; size = %d\n", i, b->size);
+			if (i > (b->size / 2))
+				return (i - b->size - 2);
 			return (i);
+		}
 		walk = walk->next;
 		i++;
 	}
@@ -520,6 +529,7 @@ int best_push_b(t_stack *b, int value)
 void best_fit(t_stack *a, t_stack *b)
 {
 	int value;
+	int op_count;
 	t_list *walk;
 	t_list *curr;
 
@@ -529,9 +539,87 @@ void best_fit(t_stack *a, t_stack *b)
 		curr = walk;
 		walk = walk->next;
 		value = get_value(curr);
-		best_push_b(b, value);
+		op_count = best_push_b(b, value);
+		// printf("%d needs %d ops;\n", value, op_count);
+		print_ab(a, b);
+		if (op_count > 0)
+		{
+			int i = op_count;
+			while (i > 1)
+			{
+				rotate_b(b);
+				i--;
+			}
+			i = op_count;
+			push_b(a, b);
+			while (i > 1)
+			{
+				rev_rotate_b(b);
+				i--;
+			}
+		}
+		if (op_count <= 0)
+		{
+			int i = op_count;
+			while (i < -1)
+			{
+				rev_rotate_b(b);
+				i++;
+			}
+			i = op_count;
+			push_b(a, b);
+			while (i < 0)
+			{
+				rotate_b(b);
+				i++;
+			}
+		}
+		print_ab(a,  b);
 	}
 
+}
+
+int closest_smaller(t_stack *a, int n)
+{
+	t_list *walk;
+	int i;
+	int closest;
+	int closest_index;
+
+	i = 0;
+	closest_index = -1;
+	while (walk)
+	{
+		if (get_value(walk->content) < n)
+		{
+			closest_index = i;
+			closest = get_value(walk->content);
+			break;
+		}
+		i++;
+		walk = walk->next;
+	}
+	while (walk)
+	{
+		if (get_value(walk->content) < n && n - get_value(walk->next) < n - closest)
+		{
+			closest_index = i;
+			closest = get_value(walk->content);
+		}
+		i++;
+		walk = walk->next;
+	}
+	return (closest_index);
+}
+
+void join(t_stack *a, t_stack *b)
+{
+	push_b(a,  b);
+	push_b(a,  b);
+	if (get_value(b->head) < get_value(b->head->next))
+		swap_b(b);
+	best_fit(a,  b);
+	push_all_b_to_a(a, b);
 }
 
 int main(int ac, char **av)
@@ -551,7 +639,7 @@ int main(int ac, char **av)
 	stack_b.size = 0;
 
 	print_ab(&stack_a, &stack_b);
-	radix(&stack_a, &stack_b);
+	join(&stack_a, &stack_b);
 	print_ab(&stack_a, &stack_b);
 	ft_lstclear(&stack_a.head, free);
 }
