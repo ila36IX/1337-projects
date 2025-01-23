@@ -6,163 +6,13 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/23 14:42:41 by aljbari           #+#    #+#             */
-/*   Updated: 2025/01/23 17:22:47 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/01/23 18:06:04 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
-#include "libft/printf/ft_printf.h"
-#include <bits/types/stack_t.h>
-#include <stdio.h>
+#include "push_swap.h"
 
 
-#define PRINT_DEBUG 0
-typedef struct t_stack_ {
-	t_list *head;
-	t_list *tail;
-	int size; 
-} t_stack;
-
-void print_ints(int *arr, size_t size);
-void swap(int* a, int* b);
-
-int partition(int *arr, int low, int high)
-{
-	int pivot = arr[high];
-	int i = low - 1;
-
-	for (int j = low; j <= high - 1; j++) {
-		if (arr[j] < pivot) {
-			i++;
-			swap(&arr[i], &arr[j]);
-		}
-	}
-	swap(&arr[i + 1], &arr[high]);  
-	return (i + 1);
-}
-
-void quick_sort(int *arr, int low, int high)
-{
-	if (low < high)
-	{
-		int pi = partition(arr, low, high);
-		quick_sort(arr, low, pi - 1);
-		quick_sort(arr, pi + 1, high);
-	}
-}
-
-void swap(int* a, int* b)
-{
-	int t = *a;
-	*a = *b;
-	*b = t;
-}
-
-/**
- * get_index - Use binary search to find the index of the x in
- * sorted array
- *
- * @sorted_arr: array of sorted integers
- * @x: value to find
- * @size: size of the array
- *
- * Return: index of x in soreted_arr or -1 if not found
- */
-int get_index(int *sorted_arr, int x, size_t size)
-{
-	int low;
-	int high;
-	int mid;
-
-	low = 0;
-	high = size - 1;
-
-	while (low <= high)
-	{
-		mid = low + (high - low) / 2;
-		if (sorted_arr[mid] == x)
-			return mid;
-		if (sorted_arr[mid] < x)
-			low = mid + 1;
-		else
-			high = mid - 1;
-	}
-	return (-1);
-}
-
-
-/**
- * normalize_stack - replace every integer with its order in the array
- * eg. 69->6->9 will be 2->0->1
- *
- * @sorted_arr: array of sorted integers
- * @head: the stack that will be normalized
- * @size: number of items in the stack
- *
- * Return: Nothing.
- */
-void normalize_arr(int *sorted_arr, t_list *head, size_t size)
-{
-	int *item;
-
-	while (head)
-	{
-		item = head->content;
-		*item = get_index(sorted_arr, *item, size);
-		head = head->next;
-	}
-}
-
-
-void print_arr(t_list *head)
-{
-	int *item;
-
-	while (head)
-	{
-		item = head->content;
-		ft_printf("%10d\n", *item);
-		head = head->next;
-	}
-	ft_printf("---\n");
-}
-
-/**
- *  arr_to_stack - Convert array of integers into a linked list of consecutive
- *  integers starting form 0, each number in the linked list represents the
- *  actual order of the original
- *
- * @arr: array of strings of integers (must be checked before calling this function)
- * - it's important for the items to be unique, and represent a valid integer
- * @size: the size of array
- *
- * Return: Pointer to the head of the array, must be free later
- */ 
-/*t_list *arr_to_list(char **arr, int size)*/
-/*{*/
-/*	t_list *head;	*/
-/*	int *sorted_buff;	*/
-/*	int *item;	*/
-/*	int i;*/
-/**/
-/*	head = NULL;*/
-/*	i = 0;*/
-/*	sorted_buff = ft_calloc(sizeof(int), size);*/
-/*	if (!sorted_buff)*/
-/*		return (NULL);*/
-/*	while (i < size)*/
-/*	{*/
-/*		item = ft_calloc(sizeof(int), 1);*/
-/*		*item = ft_atoi(arr[i]);*/
-/*		sorted_buff[i] = *item;*/
-/*		ft_lstadd_back(&head, ft_lstnew(item));*/
-/*		i++;*/
-/*	}*/
-/*	quick_sort(sorted_buff, 0, size - 1);*/
-/*	normalize_arr(sorted_buff, head, size);*/
-/*	free(sorted_buff);*/
-/*	return (head);*/
-/*}*/
 t_list *arr_to_list(char **arr, int size)
 {
 	t_list *head;	
@@ -189,141 +39,6 @@ void print_ints(int *arr, size_t size)
 	ft_printf("      _____\n");
 }
 
-
-void push_a(t_stack *stack_a, t_stack *stack_b)
-{
-	t_list *tmp;
-
-	if (!stack_b->head)
-		return ;
-	tmp = stack_b->head;
-	stack_b->head = stack_b->head->next;
-	(stack_b->size)--;
-	tmp->next = stack_a->head;
-	stack_a->head = tmp;
-	if (!stack_a->tail)
-		stack_a->tail = stack_a->head;
-	(stack_a->size)++;
-	printf("pa\n");
-}
-
-void push_b(t_stack *stack_a, t_stack *stack_b)
-{
-	t_list *tmp;
-
-	if (!stack_a->head)
-		return ;
-
-	tmp = stack_a->head;
-	stack_a->head = stack_a->head->next;
-	(stack_a->size)--;
-	tmp->next = stack_b->head;
-	stack_b->head = tmp;
-	if (!stack_b->tail)
-		stack_b->tail = stack_b->head;
-	(stack_b->size)++;
-	printf("pb\n");
-}
-
-void _swap(t_stack *stack)
-{
-	int *temp;
-	
-	if (!(stack->head) || !(stack->head->next))
-		return ;
-	temp = stack->head->content;
-	stack->head->content = stack->head->next->content;
-	stack->head->next->content = temp;
-
-}
-void swap_a(t_stack *stack)
-{
-	_swap(stack);
-	printf("sa\n");
-}
-
-void swap_b(t_stack *stack)
-{
-	_swap(stack);
-	printf("sb\n");
-
-}
-
-void swap_ab(t_stack *a, t_stack *b)
-{
-	_swap(a);
-	_swap(b);
-	printf("ss\n");
-}
-
-void _rotate(t_stack *stack)
-{
-	t_list *prv_head;
-
-	if (!(stack->tail) || (stack->tail == stack->head))
-		return ;
-	prv_head = stack->head;
-	stack->tail->next = prv_head;
-	stack->head = stack->head->next;
-	stack->tail = prv_head;
-	stack->tail->next = NULL;
-}
-
-void rotate_a(t_stack *stack)
-{
-	_rotate(stack);
-	printf("ra\n");
-}
-
-void rotate_b(t_stack *stack)
-{
-	_rotate(stack);
-	printf("rb\n");
-}
-
-void rotate_ab(t_stack *a, t_stack *b)
-{
-	_rotate(a);
-	_rotate(b);
-	printf("rr\n");
-}
-
-void _rev_rotate(t_stack *stack)
-{
-    t_list *new_head;
-    
-    if (!(stack->head) || !(stack->head->next))
-        return;
-    if (!(stack->tail))
-        return;
-    new_head = stack->tail;
-    t_list *current = stack->head;
-    while (current->next != stack->tail)
-        current = current->next;
-    new_head->next = stack->head;    
-    stack->head = new_head;          
-    stack->tail = current;           
-    stack->tail->next = NULL;       
-}
-
-void rev_rotate_a(t_stack *a)
-{
-	_rev_rotate(a);
-	ft_printf("rra\n");
-}
-
-void rev_rotate_b(t_stack *b)
-{
-	_rev_rotate(b);
-	ft_printf("rrb\n");
-}
-
-void rev_rotate_ab(t_stack *a, t_stack *b)
-{
-	_rev_rotate(a);
-	_rev_rotate(b);
-	ft_printf("rrr\n");
-}
 
 
 void print_ab(t_stack *a, t_stack *b)
@@ -363,66 +78,6 @@ void print_ab(t_stack *a, t_stack *b)
 }
 
 
-int	is_sorted19(t_stack *stack)
-{
-	t_list *walk;
-
-	walk = stack->head;
-	while (walk)
-	{
-		if (walk->next && *(int *)(walk->content) > *(int *)(walk->next->content))
-			return (0);
-		walk = walk->next;
-	}
-	return (1);
-}
-
-int	is_sorted91(t_stack *stack)
-{
-	t_list *walk;
-
-	walk = stack->head;
-	while (walk)
-	{
-		if (walk->next && *(int *)(walk->content) < *(int *)(walk->next->content))
-			return (0);
-		walk = walk->next;
-	}
-	return (1);
-}
-
-int is_bigger(t_list *a, t_list *b)
-{
-	int *v1;
-	int *v2;
-
-	v1 = a->content;
-	v2 = b->content;
-	if (*v1 > *v2)
-		return (1);
-	return (0);
-}
-
-int get_max_bits(t_stack *stack)
-{
-	int max;
-	int max_bits;
-
-	max = stack->size - 1;
-	max_bits = 0;
-	while(max > 0)
-	{
-		max >>= 1;
-		max_bits++;
-	}
-	return (max_bits);
-}
-
-int get_bit(int value, int index)
-{
-	 return ((value >> index) & 1);
-}
-
 int get_value(t_list *node)
 {
 	int *content;
@@ -431,100 +86,6 @@ int get_value(t_list *node)
 	return (*content);
 }
 
-
-int many_operations(t_stack *b, int value)
-{
-	t_list *walk;
-	int i;
-
-	walk = b->head;
-	if (get_value(walk) > value)
-		return (1);
-	i = 1;
-	/*printf("Pushing %d\n", value);*/
-	while(walk)
-	{
-		if (!walk->next)
-			return (-1);
-		/*printf("is %d between %d and %d?\n", value, get_value(walk), get_value(walk->next));*/
-		if (get_value(walk) < value && get_value(walk->next) > value)
-				return (i);
-		i++;
-		walk = walk->next;
-	}
-	return (i);
-
-}
-
-/**
- * radix_move - all integets with 0 in i-th bit will be moves to b
- * and the one with 1 will remain in a
- *
- * @a: stack a, in the end will contain all the integers with bit
- * in  @bit_index = 1
- * @b: stack b: in the end will contain all the integers with bit
- * in @bit_index = 0
- *
- * Return: Nothing
- */
-void radix_move(t_stack *a, t_stack *b, int bit_index)
-{
-	t_list *walk, *curr_node;
-	int i;
-	int stack_size;
-
-	walk = a->head;
-	i = 0;
-	stack_size = a->size;
-	while (i < stack_size && walk)
-	{
-		curr_node = walk;
-		walk = walk->next;
-		if ((get_bit(get_value(curr_node), bit_index) == 0))
-			push_b(a, b);
-		else
-			rotate_a(a);
-		i++;
-	}
-}
-
-void push_all_b_to_a(t_stack *a, t_stack *b)
-{
-	int i;
-	int stack_size;
-
-	i = 0;
-	stack_size = b->size;
-	while (i < stack_size)
-	{
-		push_a(a, b);
-		i++;
-	}
-
-}
-
-void radix_step(t_stack *a, t_stack *b, int i)
-{
-	// update needed
-	radix_move(a, b, i);
-	print_ab(a, b);
-	push_all_b_to_a(a, b);
-	print_ab(a, b);
-}
-
-void radix(t_stack *a, t_stack *b)
-{
-	int bits_count = get_max_bits(a);
-	int i = 0;
-
-	while (i < bits_count)
-	{
-		radix_step(a, b, i);
-		print_ab(a, b);
-		i++;
-	}
-
-}
 
 int best_push_b(t_stack *b, int value)
 {
@@ -670,18 +231,22 @@ int closest_bigger(t_stack *a, int n)
 		i++;
 		walk = walk->next;
 	}
-	/*printf("target of %d is in a[%d]\n", n, closest_index);*/
 	return (closest_index);
 }
 
 /*
- * How many operations needed to bring the integer
- * located in giving index to top of a
+ * calc_ops - Number of operations needed to bring the integer
+ * located in giving index to top of stack
+ *
+ * @stack: the stack which will be changed
+ * @index: index of the element that will be moved to top of stack
+ *
+ * Return: Optimal number of operations
  */
-int calc_ops(t_stack *a, int index)
+int calc_ops(t_stack *stack, int index)
 {
-	if (index > a->size / 2)
-		return -(a->size - index);
+	if (index > stack->size / 2)
+		return -(stack->size - index);
 	else
 		return (index);
 }
@@ -754,11 +319,14 @@ void excute_without_optimizing(t_stack *a, t_stack *b, int a_ops, int b_ops)
 	if (b_ops > 0)
 		while (b_ops > 0)
 		{
-			b_ops--; rotate_b(b); } else
+			b_ops--;
+			rotate_b(b); 
+		}
+	else
 		while (b_ops < 0)
 		{
 			b_ops++;
-			rev_rotate_b(a);
+			rev_rotate_b(b);
 		}
 }
 
@@ -833,25 +401,19 @@ void cheapest_push(t_stack *a, t_stack *b)
 	{
 		j = closest_smaller(b, get_value(walk));
 		if (j == -1)
-		{
 			j = bigger_index(b);
-			/*printf("bigger: %d\n", j);*/
-		}
-		/*printf("a(i) = %d, b(i) = %d\n", i, j);*/
 		if (optimized_ops_nbr(a, b, i, j) < sum)
 		{
 			best_comb[0] = i;
 			best_comb[1] = j;
 			
 			sum = optimized_ops_nbr(a, b, i, j);
-			/*printf("{new best} a(i) = %d, b(i) = %d\n", i, j);*/
 		}
 		if (sum == 0)
 			break;
 		walk = walk->next;
 		i++;
 	}
-	/*printf("rev a: %d | rev b: %d\n", best_comb[0], best_comb[1]);*/
 	execute_ops(a, b, best_comb[0], best_comb[1]);
 	push_b(a, b);
 }
@@ -875,7 +437,6 @@ void turk_push_a(t_stack *a, t_stack *b)
 			best_comb[0] = j;
 			best_comb[1] = i;
 			
-			// printf("{new best} a(i) = %d, b(i) = %d\n", j, i);
 			sum = optimized_ops_nbr(a, b, j, i);
 		}
 		if (sum == 0)
@@ -906,13 +467,8 @@ void turk(t_stack *a, t_stack *b)
 		turk_push_a(a, b);
 		i--;
 	}
-	/*cheapest_push(a, b);*/
-	/*print_ab(a, b);*/
-	/*cheapest_push(a, b);*/
-	/*print_ab(a, b);*/
 	int min_idx = smallest_index(a);
 	execute_ops(a, b, min_idx, 0);
-
 }
 
 int main(int ac, char **av)
