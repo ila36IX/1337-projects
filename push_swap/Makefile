@@ -2,6 +2,7 @@ CC = @cc
 CFLAGS = -Wall -Wextra -Werror
 
 SRC_FILES= $(wildcard *.c)
+INC_FILES= $(wildcard *.h)
 
 SRC_OBJ= $(SRC_FILES:%.c=%.o)
 
@@ -13,7 +14,7 @@ all: libft_rule run
 libft_rule:
 	@$(MAKE) -C $(LIBFT_DIR) bonus
 
-run: $(SRC_OBJ) $(LIBFT)
+run: $(SRC_OBJ) $(INC_FILES) $(LIBFT)
 	$(CC)  $(CFLAGS) $(SRC_OBJ) -Llibft -lft -o run
 
 start: run

@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft/printf/ft_printf.h"
 #include "push_swap.h"
 
 
@@ -77,6 +78,7 @@ int main(int ac, char **av)
 	stack_a.head = arr_to_list(&av[1], size);;
 	stack_a.tail = ft_lstlast(stack_a.head);
 	stack_a.size = ft_lstsize(stack_a.head);
+	ft_printf("Integers count: %d\n", size);
 
 	// Empty stack
 	stack_b.head = NULL;
