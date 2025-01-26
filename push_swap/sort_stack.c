@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sort_stack.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/27 00:32:07 by aljbari           #+#    #+#             */
+/*   Updated: 2025/01/27 00:32:20 by aljbari          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "push_swap.h"
 
 /**
@@ -6,12 +18,12 @@
  * @a: Pointer to stack a
  * Return: Index where the max item is located in a
  */
-int bigger_index(t_stack *a)
+int	bigger_index(t_stack *a)
 {
-	int i;
-	int big;
-	int big_idx;
-	t_list *walk;
+	int		i;
+	int		big;
+	int		big_idx;
+	t_list	*walk;
 
 	walk = a->head;
 	big = get_value(walk);
@@ -30,12 +42,11 @@ int bigger_index(t_stack *a)
 	return (big_idx);
 }
 
-
 /**
  * sort_stack - call to action main algorithm
  * - It pushs all value in a into b using the slow/fast algo
  * - than it pushs back all items in b into a, by finding every
- *   time the max in b and push it using rotate or rev-rotate 
+ *   time the max in b and push it using rotate or rev-rotate
  *   that depends on where the max is located (above/bottom of
  *   the middle)
  *
@@ -45,11 +56,11 @@ int bigger_index(t_stack *a)
  *
  * Return: nothing
  */
-void sort_stack(t_stack *a, t_stack *b, int *arr)
+void	sort_stack(t_stack *a, t_stack *b, int *arr)
 {
-	int i;
-	int j;
-	int size;
+	int	i;
+	int	j;
+	int	size;
 
 	i = 0;
 	if (a->size >= 100)
@@ -79,7 +90,7 @@ void sort_stack(t_stack *a, t_stack *b, int *arr)
  *
  * Return: nothing
  */
-void	push_into_b(t_stack *a, t_stack *b,int small, int big)
+void	push_into_b(t_stack *a, t_stack *b, int small, int big)
 {
 	while (1)
 	{
@@ -93,7 +104,7 @@ void	push_into_b(t_stack *a, t_stack *b,int small, int big)
 		{
 			push_b(a, b);
 			if (b->size > 1 && get_value(b->head) < get_value(b->head->next))
-					swap_b(b);
+				swap_b(b);
 			return ;
 		}
 		else
@@ -112,14 +123,15 @@ void	push_into_b(t_stack *a, t_stack *b,int small, int big)
  *
  * Return: nothing
  */
-void optimal_push_to_a(t_stack *a, t_stack *b, int b_idx)
+void	optimal_push_to_a(t_stack *a, t_stack *b, int b_idx)
 {
-	int ops = calc_ops(b, b_idx);
+	int	ops;
 
+	ops = calc_ops(b, b_idx);
 	while (ops > 0)
 	{
 		ops--;
-		rotate_b(b); 
+		rotate_b(b);
 	}
 	while (ops < 0)
 	{
@@ -138,7 +150,7 @@ void optimal_push_to_a(t_stack *a, t_stack *b, int b_idx)
  *
  * Return: nothing
  */
-void restore_to_a(t_stack *a, t_stack *b)
+void	restore_to_a(t_stack *a, t_stack *b)
 {
 	while (b->size > 0)
 		optimal_push_to_a(a, b, bigger_index(b));
