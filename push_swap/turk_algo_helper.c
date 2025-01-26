@@ -67,6 +67,7 @@ int bigger_index(t_stack *a)
 
 	walk = a->head;
 	big = get_value(walk);
+	big_idx = 0;
 	i = 0;
 	while (walk)
 	{
