@@ -1,78 +1,65 @@
-#include "libft/printf/ft_printf.h"
 #include "push_swap.h"
 
-void restore_to_a(t_stack *a, t_stack *b);
-void bubble_sort(int *arr, int size)
+/**
+ * bigger_index - find the index of the max value in stack a
+ *
+ * @a: Pointer to stack a
+ * Return: Index where the max item is located in a
+ */
+int bigger_index(t_stack *a)
 {
-    int swapped;
-    int i = 0;
-    
-    while (i < size - 1)
-    {
-        swapped = 0;
-        int j = 0;
-        
-        while (j < size - i - 1)
-        {
-            if (arr[j] > arr[j + 1])
-            {
-                // Swap elements
-                int temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
-                swapped = 1;
-            }
-            j++;
-        }
-        if (!swapped)
-            break;
-        
-        i++;
-    }
-}
-
-int *sorted_buffer(t_stack *a, t_stack *b)
-{
-	int *arr;
-	t_list *walk;
 	int i;
-	
-	(void) b;
+	int big;
+	int big_idx;
+	t_list *walk;
 
-	arr = ft_calloc(a->size, sizeof(int));
-	i = 0;
 	walk = a->head;
+	big = get_value(walk);
+	big_idx = 0;
+	i = 0;
 	while (walk)
 	{
-		arr[i++] = get_value(walk);
+		if (get_value(walk) > big)
+		{
+			big = get_value(walk);
+			big_idx = i;
+		}
+		i++;
 		walk = walk->next;
 	}
-	bubble_sort(arr, a->size);
-	return (arr);
+	return (big_idx);
 }
 
-int	search_a(t_stack *a, int small, int big);
+
+/**
+ * sort_stack - call to action main algorithm
+ * - It pushs all value in a into b using the slow/fast algo
+ * - than it pushs back all items in b into a, by finding every
+ *   time the max in b and push it using rotate or rev-rotate 
+ *   that depends on where the max is located (above/bottom of
+ *   the middle)
+ *
+ * @a: the stack a full with the values
+ * @b: the stack b (empty)
+ * @arr: array of sorted stack 'a' items
+ *
+ * Return: nothing
+ */
 void sort_stack(t_stack *a, t_stack *b, int *arr)
 {
-	int i, j, todo;
+	int i;
+	int j;
 	int size;
 
 	i = 0;
 	if (a->size >= 100)
 		j = a->size / 13;
 	else
-		j = a->size / 7;
+		j = a->size / 8;
 	size = a->size;
 	while (a->size > 0)
 	{
-		todo = search_a(a, arr[i], arr[j]);
-		push_b(a, b);
-		if (todo == 1 && b->size > 1 && get_value(b->head) < get_value(b->head->next))
-			swap_b(b);
-		if (todo == -1)
-		{
-			rotate_b(b);
-		}
+		push_into_b(a, b, arr[i], arr[j]);
 		if (i < j)
 			i++;
 		if (j < size)
@@ -82,22 +69,49 @@ void sort_stack(t_stack *a, t_stack *b, int *arr)
 	restore_to_a(a, b);
 }
 
-// 1 swap
-// -1 rotate
-int	search_a(t_stack *a, int small, int big)
+/**
+ * push_into_b - push items in a into b respcting tha slow/fast algorithm
+ *
+ * @a: the stack a
+ * @b: the stack b
+ * @small: the current small target
+ * @big: the current big target
+ *
+ * Return: nothing
+ */
+void	push_into_b(t_stack *a, t_stack *b,int small, int big)
 {
 	while (1)
 	{
 		if (get_value(a->head) <= small)
-			return (-1);
+		{
+			push_b(a, b);
+			rotate_b(b);
+			return ;
+		}
 		else if (get_value(a->head) <= big)
-			return (1);
+		{
+			push_b(a, b);
+			if (b->size > 1 && get_value(b->head) < get_value(b->head->next))
+					swap_b(b);
+			return ;
+		}
 		else
 			rotate_a(a);
 	}
-	return (-2);
 }
 
+/**
+ * optimal_push_to_a - push item in a giving index from b
+ * into top of a
+ *
+ * @a: stack a
+ * @b: stack b
+ * @b_idx: the index where the item located in b which will
+ * be moved to a
+ *
+ * Return: nothing
+ */
 void optimal_push_to_a(t_stack *a, t_stack *b, int b_idx)
 {
 	int ops = calc_ops(b, b_idx);
@@ -115,6 +129,15 @@ void optimal_push_to_a(t_stack *a, t_stack *b, int b_idx)
 	push_a(a, b);
 }
 
+/**
+ * restore_to_a - resotre all item in b into, by sending the
+ * max in b everytime
+ *
+ * @a: stack a
+ * @b: stack a
+ *
+ * Return: nothing
+ */
 void restore_to_a(t_stack *a, t_stack *b)
 {
 	while (b->size > 0)
