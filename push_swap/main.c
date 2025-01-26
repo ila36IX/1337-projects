@@ -68,6 +68,7 @@ void print_ab(t_stack *a, t_stack *b)
 	ft_printf("%10s%10s\n\n", "a", "b");
 }
 
+int * sorted_buffer(t_stack *a, t_stack *b);
 
 int main(int ac, char **av)
 {		
@@ -78,7 +79,6 @@ int main(int ac, char **av)
 	stack_a.head = arr_to_list(&av[1], size);;
 	stack_a.tail = ft_lstlast(stack_a.head);
 	stack_a.size = ft_lstsize(stack_a.head);
-	ft_printf("Integers count: %d\n", size);
 
 	// Empty stack
 	stack_b.head = NULL;
@@ -87,6 +87,7 @@ int main(int ac, char **av)
 
 	print_ab(&stack_a, &stack_b);
 	turk(&stack_a, &stack_b);
+	/*sort_stack(&stack_a, &stack_b, sorted_buffer(&stack_a, &stack_b));*/
 	print_ab(&stack_a, &stack_b);
 	ft_lstclear(&stack_a.head, free);
 }

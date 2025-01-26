@@ -33,3 +33,6 @@ void print_ab(t_stack *a, t_stack *b);
 int calc_ops(t_stack *stack, int index);
 int _abs(int n);
 void turk(t_stack *a, t_stack *b);
+void sort_stack(t_stack *a, t_stack *b, int *arr);
+
+void execute_ops(t_stack *a, t_stack *b, int a_idx, int b_idx);

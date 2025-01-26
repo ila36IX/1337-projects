@@ -5,8 +5,8 @@
  * optimized_ops_nbr - calculte the must optimal number of
  * opetations to move two integers from a and b into the top 
  * of there stack
- * @a_idx: index of the first number at stack a
- * @b_idx: index of the second number at stack b
+ * @a_idx: index of number at stack a
+ * @b_idx: index of number at stack b
  *
  * Return: The must optimal number of operations
  */
@@ -15,6 +15,8 @@ int optimized_ops_nbr(t_stack *a, t_stack *b, int a_idx, int b_idx)
 	a_idx = calc_ops(a, a_idx);
 	b_idx = calc_ops(b, b_idx);
 
+	if (a_idx == b_idx)
+		return (_abs(a_idx));
 	if (a_idx > 0 && b_idx > 0)
 	{
 		if (a_idx > b_idx)
@@ -35,30 +37,26 @@ int optimized_ops_nbr(t_stack *a, t_stack *b, int a_idx, int b_idx)
 
 void excute_without_optimizing(t_stack *a, t_stack *b, int a_ops, int b_ops)
 {
-	if (a_ops > 0)
-		while (a_ops > 0)
-		{
-			a_ops--;
-			rotate_a(a);
-		}
-	else
-		while (a_ops < 0)
-		{
-			a_ops++;
-			rev_rotate_a(a);
-		}
-	if (b_ops > 0)
-		while (b_ops > 0)
-		{
-			b_ops--;
-			rotate_b(b); 
-		}
-	else
-		while (b_ops < 0)
-		{
-			b_ops++;
-			rev_rotate_b(b);
-		}
+	while (a_ops > 0)
+	{
+		a_ops--;
+		rotate_a(a);
+	}
+	while (a_ops < 0)
+	{
+		a_ops++;
+		rev_rotate_a(a);
+	}
+	while (b_ops > 0)
+	{
+		b_ops--;
+		rotate_b(b); 
+	}
+	while (b_ops < 0)
+	{
+		b_ops++;
+		rev_rotate_b(b);
+	}
 }
 
 void sort3_a(t_stack *a)
@@ -82,39 +80,51 @@ void sort3_a(t_stack *a)
 		swap_a(a);
 }
 
+
+void sync_rotate(t_stack *a, t_stack *b, int a_ops, int b_ops)
+{
+	while (a_ops > 0 || b_ops > 0)
+	{
+		if (a_ops > 0 && b_ops > 0)
+			rotate_ab(a, b);
+		else if (a_ops > 0)
+			rotate_a(a);
+		else
+			rotate_b(b);
+		a_ops--;
+		b_ops--;
+	}
+}
+
+void sync_rrotate(t_stack *a, t_stack *b, int a_ops, int b_ops)
+{
+	a_ops = _abs(a_ops);
+	b_ops = _abs(b_ops);
+	
+	while (a_ops > 0 || b_ops > 0)
+	{
+		if (a_ops > 0 && b_ops > 0)
+			rev_rotate_ab(a, b);
+		else if (a_ops > 0)
+			rev_rotate_a(a);
+		else
+			rev_rotate_b(b);
+		a_ops--;
+		b_ops--;
+	}
+}
+
 void execute_ops(t_stack *a, t_stack *b, int a_idx, int b_idx)
 {
+	if (!a_idx  && !b_idx)
+		return;
 	int a_ops = calc_ops(a, a_idx);
 	int b_ops = calc_ops(b, b_idx);
 
 	if (a_ops > 0 && b_ops > 0)
-		while (a_ops > 0 || b_ops > 0)
-		{
-			if (a_ops > 0 && b_ops > 0)
-				rotate_ab(a, b);
-			else if (a_ops > 0)
-				rotate_a(a);
-			else
-				rotate_b(b);
-			a_ops--;
-			b_ops--;
-		}
+		sync_rotate(a, b, a_ops, b_ops);
 	else if (a_ops < 0 && b_ops < 0)
-	{
-		a_ops = _abs(a_ops);
-		b_ops = _abs(b_ops);
-		while (a_ops > 0 || b_ops > 0)
-		{
-			if (a_ops > 0 && b_ops > 0)
-				rev_rotate_ab(a, b);
-			else if (a_ops > 0)
-				rev_rotate_a(a);
-			else
-				rev_rotate_b(b);
-			a_ops--;
-			b_ops--;
-		}
-	}
+		sync_rrotate(a, b, a_ops, b_ops);
 	else
 		excute_without_optimizing(a, b, a_ops, b_ops);
 }
@@ -122,13 +132,15 @@ void execute_ops(t_stack *a, t_stack *b, int a_idx, int b_idx)
 void turk_push_b(t_stack *a, t_stack *b)
 {
 	t_list *walk;
-	int i, j, sum;
+	int i;
+	int j;
+	int sum;
 	int best_comb[2];
 
 	walk = a->head;
 	i = 0;
 	sum = a->size + b->size;
-	while (walk)
+	while (walk && sum)
 	{
 		j = closest_smaller(b, get_value(walk));
 		if (j == -1)
@@ -137,11 +149,8 @@ void turk_push_b(t_stack *a, t_stack *b)
 		{
 			best_comb[0] = i;
 			best_comb[1] = j;
-			
 			sum = optimized_ops_nbr(a, b, i, j);
 		}
-		if (sum == 0)
-			break;
 		walk = walk->next;
 		i++;
 	}
@@ -152,13 +161,15 @@ void turk_push_b(t_stack *a, t_stack *b)
 void turk_push_a(t_stack *a, t_stack *b)
 {
 	t_list *walk;
-	int i, j, sum;
+	int i;
+	int j;
+	int sum;
 	int best_comb[2];
 
 	walk = b->head;
 	i = 0;
 	sum = a->size + b->size;
-	while (walk)
+	while (walk && sum)
 	{
 		j = closest_bigger(a, get_value(walk));
 		if (j == -1)
@@ -169,8 +180,6 @@ void turk_push_a(t_stack *a, t_stack *b)
 			best_comb[1] = i;
 			sum = optimized_ops_nbr(a, b, j, i);
 		}
-		if (sum == 0)
-			break;
 		walk = walk->next;
 		i++;
 	}
@@ -181,9 +190,11 @@ void turk_push_a(t_stack *a, t_stack *b)
 void turk(t_stack *a, t_stack *b)
 {
 	int i;
+	int min_idx;
 
-	push_b(a,  b);
-	push_b(a,  b);
+	push_b(a, b);
+	push_b(a, b);
+
 	i = a->size - 3;
 	while (i > 0)
 	{
@@ -197,6 +208,6 @@ void turk(t_stack *a, t_stack *b)
 		turk_push_a(a, b);
 		i--;
 	}
-	int min_idx = smallest_index(a);
+	min_idx = smallest_index(a);
 	execute_ops(a, b, min_idx, 0);
 }

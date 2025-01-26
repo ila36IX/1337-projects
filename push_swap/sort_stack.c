@@ -70,7 +70,9 @@ void sort_stack(t_stack *a, t_stack *b, int *arr)
 		if (todo == 1 && b->size > 1 && get_value(b->head) < get_value(b->head->next))
 			swap_b(b);
 		if (todo == -1)
+		{
 			rotate_b(b);
+		}
 		if (i < j)
 			i++;
 		if (j < size)
@@ -116,10 +118,5 @@ void optimal_push_to_a(t_stack *a, t_stack *b, int b_idx)
 void restore_to_a(t_stack *a, t_stack *b)
 {
 	while (b->size > 0)
-	{
-		/*execute_ops(a, b, 0, bigger_index(b));*/
 		optimal_push_to_a(a, b, bigger_index(b));
-		/*push_a(a, b);*/
-		ft_printf("1");
-	}
 }
