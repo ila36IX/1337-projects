@@ -6,30 +6,57 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/23 14:42:41 by aljbari           #+#    #+#             */
-/*   Updated: 2025/01/23 18:14:09 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/01/27 01:25:37 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft/libft.h"
 #include "libft/printf/ft_printf.h"
 #include "push_swap.h"
 
-
-t_list *arr_to_list(char **arr, int size)
+void bubble_sort(int *arr, int size)
 {
-	t_list *head;	
-	int *item;	
-	int i;
+	int swapped;
+	int i = 0;
 
-	head = NULL;
-	i = 0;
-	while (i < size)
+	while (i < size - 1)
 	{
-		item = ft_calloc(sizeof(int), 1);
-		*item = ft_atoi(arr[i]);
-		ft_lstadd_back(&head, ft_lstnew(item));
+		swapped = 0;
+		int j = 0;
+
+		while (j < size - i - 1)
+		{
+			if (arr[j] > arr[j + 1])
+			{
+				int temp = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = temp;
+				swapped = 1;
+			}
+			j++;
+		}
+		if (!swapped)
+			break;
 		i++;
 	}
-	return (head);
+}
+
+int *sorted_buffer(t_stack *a)
+{
+	int *arr;
+	t_list *walk;
+	int i;
+
+	arr = ft_calloc(a->size, sizeof(int));
+	i = 0;
+	walk = a->head;
+	while (walk)
+	{
+		arr[i++] = get_value(walk);
+		walk = walk->next;
+	}
+	bubble_sort(arr, a->size);
+	return (arr);
 }
 
 void print_ab(t_stack *a, t_stack *b)
@@ -68,26 +95,45 @@ void print_ab(t_stack *a, t_stack *b)
 	ft_printf("%10s%10s\n\n", "a", "b");
 }
 
-int * sorted_buffer(t_stack *a, t_stack *b);
+int check_duplicates(int *sorted_arr, int size)
+{
+	int i;
+
+	i = 1;
+	while  (i < size)
+	{
+		if (sorted_arr[i - 1] == sorted_arr[i])
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 int main(int ac, char **av)
 {		
-	t_stack stack_a, stack_b;
+	t_stack a, b;
 	size_t size;
+	int *sorted;
 
 	size = ac - 1;
-	stack_a.head = arr_to_list(&av[1], size);;
-	stack_a.tail = ft_lstlast(stack_a.head);
-	stack_a.size = ft_lstsize(stack_a.head);
-
-	// Empty stack
-	stack_b.head = NULL;
-	stack_b.tail = NULL;
-	stack_b.size = 0;
-
-	print_ab(&stack_a, &stack_b);
-	turk(&stack_a, &stack_b);
-	/*sort_stack(&stack_a, &stack_b, sorted_buffer(&stack_a, &stack_b));*/
-	print_ab(&stack_a, &stack_b);
-	ft_lstclear(&stack_a.head, free);
+	a.head = arr_to_list(&av[1], size);;
+	if (!a.head)
+	{
+		ft_printf("Error\n");
+		return (0);
+	}
+	sorted = sorted_buffer(&a);
+	if (check_duplicates(sorted, a.size))
+	{
+		// TODO: Look for duplicated and free sorted array if any found
+	}
+	a.tail = ft_lstlast(a.head);
+	a.size = ft_lstsize(a.head);
+	b.head = NULL;
+	b.tail = NULL;
+	b.size = 0;
+	print_ab(&a, &b);
+	sort_stack(&a, &b, sorted);
+	print_ab(&a, &b);
+	ft_lstclear(&a.head, free);
 }
