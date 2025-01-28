@@ -6,12 +6,18 @@
 /*   By: aljbari <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 16:11:56 by aljbari           #+#    #+#             */
-/*   Updated: 2025/01/28 16:11:57 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/01/28 17:23:02 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
+/**
+ * sort_three - sort stack of size 3
+ *
+ * @s: pointer to stack
+ * Return: Nothing, it will chnage s items order
+ */
 void	sort_three(t_stack *s)
 {
 	int	n1;
@@ -31,6 +37,12 @@ void	sort_three(t_stack *s)
 		swap_a(s);
 }
 
+/**
+ * min_pos - get the index of the smallest item in a stack
+ *
+ * @s: pointer to a stack
+ * Return: Index of the smallest item in stack "s"
+ */
 int	min_pos(t_stack *s)
 {
 	t_list	*tmp;
@@ -55,6 +67,14 @@ int	min_pos(t_stack *s)
 	return (pos);
 }
 
+/**
+ * sm_sort - small sort algo to sort stack with small number
+ * of items efficiently
+ *
+ * @a: stack a
+ * @b: stack b
+ * Return: Nothing, it will change the order of items in stack "a"
+ */
 void	sm_sort(t_stack *a, t_stack *b)
 {
 	int	pos;

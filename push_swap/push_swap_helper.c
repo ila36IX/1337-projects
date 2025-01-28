@@ -1,8 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   push_swap_helper.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/28 16:13:22 by aljbari           #+#    #+#             */
+/*   Updated: 2025/01/28 17:22:48 by aljbari          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "push_swap.h"
 
-int get_value(t_list *node)
+/**
+ * get_value - get integer that node is hoding its pointer
+ * Note: Null node will segfault, it must be checked before
+ *
+ * @node: node in a linked list
+ * Return: integer that node is holding
+ */
+int	get_value(t_list *node)
 {
-	int *content;
+	int	*content;
 
 	content = node->content;
 	return (*content);
@@ -17,7 +36,7 @@ int get_value(t_list *node)
  *
  * Return: Optimal number of operations
  */
-int calc_ops(t_stack *stack, int index)
+int	calc_ops(t_stack *stack, int index)
 {
 	if (index > stack->size / 2)
 		return (index - stack->size);
@@ -26,16 +45,23 @@ int calc_ops(t_stack *stack, int index)
 }
 
 /**
+ * is_sorted - check if stack a is sorted (smaller at top)
  *
- * _abs - absolute value of an integer n
- *
- * @n: integer
- * Return: The absolute value of integer (it's positive version)
+ * @a: Pointer to stack
+ * Return: 1 is it sorted, 0 if not
  */
-int _abs(int n)
+int	is_sorted(t_stack *a)
 {
-	if (n > 0)
-		return (n);
-	else
-		return (n * -1);
+	t_list	*walk;
+
+	walk = a->head;
+	if (!walk)
+		return (1);
+	while (walk->next)
+	{
+		if (get_value(walk) > get_value(walk->next))
+			return (0);
+		walk = walk->next;
+	}
+	return (1);
 }

@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   operation_rotate.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aljbari <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/28 16:10:45 by aljbari           #+#    #+#             */
+/*   Updated: 2025/01/28 16:10:47 by aljbari          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "push_swap.h"
 
-void _rotate(t_stack *stack)
+void	_rotate(t_stack *stack)
 {
-	t_list *prv_head;
+	t_list	*prv_head;
 
 	if (!(stack->tail) || (stack->tail == stack->head))
 		return ;
@@ -13,19 +25,19 @@ void _rotate(t_stack *stack)
 	stack->tail->next = NULL;
 }
 
-void rotate_a(t_stack *stack)
+void	rotate_a(t_stack *stack)
 {
 	_rotate(stack);
 	ft_printf("ra\n");
 }
 
-void rotate_b(t_stack *stack)
+void	rotate_b(t_stack *stack)
 {
 	_rotate(stack);
 	ft_printf("rb\n");
 }
 
-void rotate_ab(t_stack *a, t_stack *b)
+void	rotate_ab(t_stack *a, t_stack *b)
 {
 	_rotate(a);
 	_rotate(b);
