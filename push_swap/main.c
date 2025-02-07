@@ -80,7 +80,7 @@ int	*sorted_buffer(t_stack *a)
  *
  * @sorted_arr: pointer to list of sorted integers
  * @size: size of @sorted_arr
- * Return: 1 if any equal values do exist, or 0 if no any
+ * Return: 1 if there are any equal values, or 0 if there are none.
  */
 int	duplicates_exists(int *sorted_arr, int size)
 {
@@ -126,6 +126,7 @@ int	checkdup_sort(t_stack *a, t_stack *b)
 		sort_stack(a, b, sorted);
 	else
 		sm_sort(a, b);
+	free(sorted);
 	ft_lstclear(&a->head, free);
 	return (0);
 }

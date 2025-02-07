@@ -73,11 +73,10 @@ void	sort_stack(t_stack *a, t_stack *b, int *arr)
 		push_into_b(a, b, arr[i], arr[j]);
 		if (i < j)
 			i++;
-		if (j < size)
+		if (j < size - 1)
 			j++;
 	}
 	restore_to_a(a, b);
-	free(arr);
 }
 
 /**
