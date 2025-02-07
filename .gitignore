@@ -53,6 +53,7 @@ dkms.conf
 
 # Ignore all libft directories
 **/libft/
+**/mlx_linux
 
 # Un-ignore libft in the root directory
 !/libft/
