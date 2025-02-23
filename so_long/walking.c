@@ -16,7 +16,7 @@ void draw_offset_asset(t_game *game, t_moving_asset *asset, int pex_x, int pex_y
 }
 
 
-#define FRAME_RATE 12
+#define FRAME_RATE 10
 
 
 void move_left(t_pos *pos, t_moving_asset *asset)
@@ -47,17 +47,31 @@ void move_right(t_pos *pos, t_moving_asset *asset)
         }
 }
 
-void move_buttom(t_pos *pos, t_moving_asset *asset)
+void move_bottom(t_pos *pos, t_moving_asset *asset)
 {
-        if (!asset->off_x || asset->off_y)
+        if (!asset->off_y || asset->off_x)
                 return ;
         asset->_off_y = asset->off_y;
         asset->off_y += FRAME_RATE;
-        if (asset->off_y * 1 > IMG_SIZE)
+        if (asset->off_y > IMG_SIZE)
         {
                 asset->_off_y = 0;
                 asset->off_y = 0;
                 pos->y++;
+        }
+}
+
+void move_top(t_pos *pos, t_moving_asset *asset)
+{
+        if (!asset->off_y || asset->off_x)
+                return ;
+        asset->_off_y = asset->off_y;
+        asset->off_y -= FRAME_RATE;
+        if (asset->off_y * -1 > IMG_SIZE)
+        {
+                asset->_off_y = 0;
+                asset->off_y = 0;
+                pos->y--;
         }
 }
 /*void transform_y(t_pos *pos, t_moving_asset *asset)*/
