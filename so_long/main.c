@@ -80,6 +80,7 @@ int	press(int keycode, t_game *game)
                 game->assets->player.off_y = -2;
         if (keycode == 115 && !game->assets->player.off_x)
                 game->assets->player.off_y = 2;
+
         /*printf("Pressed\n");*/
         printf("KEY: %d\n", keycode);
         return (0);
@@ -111,13 +112,23 @@ void    handle_moves(t_game *game, t_moving_asset *p)
         }
         else if (p->off_y > 0)
         {
+                if (p->curr == BOTTOM_1)
+                        p->curr = BOTTOM_2;
+                else if (p->curr == BOTTOM_2)
+                        p->curr = BOTTOM_3;
+                else
+                        p->curr = BOTTOM_1;
+                move_bottom(&game->pos, p);
+        }
+        else if (p->off_y < 0)
+        {
                 if (p->curr == TOP_1)
                         p->curr = TOP_2;
                 else if (p->curr == TOP_2)
                         p->curr = TOP_3;
                 else
                         p->curr = TOP_1;
-                move_left(&game->pos, p);
+                move_top(&game->pos, p);
         }
 }
 
@@ -127,7 +138,7 @@ int _update(t_game *game)
 
         handle_moves(game, p);
         draw_offset_asset(game, p, game->pos.x, game->pos.y);
-        usleep(90000);
+        usleep(50000);
         printf("MANY: %d\n", many++);
         return (0);
 }

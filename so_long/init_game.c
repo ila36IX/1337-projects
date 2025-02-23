@@ -27,7 +27,6 @@ t_game *init_game(char **map) {
 
         game = malloc(sizeof(t_game));
         game->mlx = mlx_init();
-        ;
         game->map = map;
         game->map_w = strlen(map[0]);
         game->map_h = 0;
@@ -73,6 +72,9 @@ t_assets *init_assets(t_game *game)
         views[TOP_1] = init_img(game, "./images/banana_top1.xpm");        
         views[TOP_2] = init_img(game, "./images/banana_top2.xpm");        
         views[TOP_3] = init_img(game, "./images/banana_top3.xpm");        
+        views[BOTTOM_1] = init_img(game, "./images/banana_bottom1.xpm");        
+        views[BOTTOM_2] = init_img(game, "./images/banana_bottom2.xpm");        
+        views[BOTTOM_3] = init_img(game, "./images/banana_bottom3.xpm");        
         player.views = views;
         player.off_x = 0;
         player.off_y = 0;
