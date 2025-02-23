@@ -6,13 +6,15 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:28:11 by aljbari           #+#    #+#             */
-/*   Updated: 2025/02/21 17:28:13 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/02/22 17:25:39 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
+#include <stdlib.h>
 
-void *init_img(t_game *game, char *path) {
+void *init_img(t_game *game, char *path)
+{
         int w;
         int h;
 
@@ -41,18 +43,43 @@ t_game *init_game(char **map) {
                                 pos.y = y;
                         }
         }
-        game->pos = pos;
+        // game->pos = pos;
+        t_pos test = {0, 0};
+        game->pos = test;
         return (game);
 }
 
-t_assets *init_assets(t_game *game) {
+t_assets *init_assets(t_game *game)
+{
         t_assets *assets;
+        t_moving_asset player; 
+        t_data **views;
 
         assets = malloc(sizeof(t_assets));
         assets->wall = init_img(game, "./images/wall.xpm");
         assets->peel = init_img(game, "./images/peel.xpm");
         assets->empty = init_img(game, "./images/empty.xpm");
         assets->banana = init_img(game, "./images/banana_front.xpm");
+        assets->background = init_img(game, "./images/background.xpm");
+        views = malloc(sizeof(t_data) * 20);
+        views[NONE] = init_img(game, "./images/empty.xpm");        
+        views[FRONT] = init_img(game, "./images/banana_left1.xpm");        
+        views[LEFT_1] = init_img(game, "./images/banana_left1.xpm");        
+        views[LEFT_2] = init_img(game, "./images/banana_left2.xpm");        
+        views[LEFT_3] = init_img(game, "./images/banana_left3.xpm");        
+        views[RIGHT_1] = init_img(game, "./images/banana_right1.xpm");        
+        views[RIGHT_2] = init_img(game, "./images/banana_right2.xpm");        
+        views[RIGHT_3] = init_img(game, "./images/banana_right3.xpm");        
+        views[TOP_1] = init_img(game, "./images/banana_top1.xpm");        
+        views[TOP_2] = init_img(game, "./images/banana_top2.xpm");        
+        views[TOP_3] = init_img(game, "./images/banana_top3.xpm");        
+        player.views = views;
+        player.off_x = 0;
+        player.off_y = 0;
+        player._off_x = 0;
+        player._off_y = 0;
+        player.curr = 1;
+        assets->player = player;
         return (assets);
 }
 
@@ -61,22 +88,4 @@ void put_pixel(t_data *data, int x, int y, int color) {
 
         dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
         *(unsigned int *)dst = color;
-}
-
-t_data *init_asset(void *mlx, int x_size, int y_size, int color) {
-        t_data *fr;
-
-        fr = malloc(sizeof(t_data));
-        fr->img = mlx_new_image(mlx, x_size, y_size);
-        fr->addr = mlx_get_data_addr(fr->img, &fr->bits_per_pixel, &fr->line_length,
-                                     &fr->endian);
-        for (int i = 0; i < x_size; i++)
-                put_pixel(fr, i, 0, color);
-        for (int i = 0; i < x_size; i++)
-                put_pixel(fr, i, y_size - 1, color);
-        for (int i = 0; i < y_size; i++)
-                put_pixel(fr, 0, i, color);
-        for (int i = 0; i < y_size; i++)
-                put_pixel(fr, x_size - 1, i, color);
-        return (fr);
 }
