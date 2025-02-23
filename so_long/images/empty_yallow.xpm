@@ -1,8 +1,8 @@
 /* XPM */
-static char *empty[] = {
+static char *ali_strikes[] = {
 /* columns rows colors chars-per-pixel */
 "64 64 1 1 ",
-"  c #BF0000",
+"  c #E9E900",
 /* pixels */
 "                                                                ",
 "                                                                ",
