@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 11:12:00 by aljbari           #+#    #+#             */
-/*   Updated: 2025/02/22 17:25:28 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/02/24 14:24:17 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <unistd.h>
 
 #define IMG_SIZE 64
+#define FRAME_RATE IMG_SIZE / 8
 
 typedef struct s_data {
         void *img;
@@ -27,7 +28,7 @@ typedef struct s_data {
         int endian;
 } t_data;
 
-#define FRONT 10
+#define FRONT 19
 #define NONE 0
 #define RIGHT_1 1
 #define RIGHT_2 2
@@ -83,7 +84,10 @@ typedef struct s_game {
         char *curr_face;
         int x_transform;
         int y_transform;
+        int keycode;
 } t_game;
+
+
 
 typedef struct s_keycodes {
         int up;
