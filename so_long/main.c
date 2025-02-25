@@ -180,9 +180,15 @@ int _update(t_game *game)
         handle_moves(game, p);
         if (p->off_x || p->off_y)
                 draw_walker(game, p);
+        else
+        {
+                draw_img(game, p->views[p->curr], p->pos->x, p->pos->y);
+                update_face(&p->curr, STAND_1);
+                usleep(75000);
+        }
         if (game->keycode)
                 press(game->keycode, game);
-        usleep(55000);
+        usleep(45000);
         /*printf("MANY: %d\n", many++);*/
         return (0);
 }

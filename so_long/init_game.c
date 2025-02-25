@@ -17,8 +17,17 @@ void *init_img(t_game *game, char *path)
 {
         int w;
         int h;
+        void *img;
 
-        return (mlx_xpm_file_to_image(game->mlx, path, &w, &h));
+        img = NULL;
+        img = mlx_xpm_file_to_image(game->mlx, path, &w, &h);
+        if (img)
+                return (img);
+        else
+        {
+                printf("Img init Error: \"%s\" exists?", path);
+                exit(200);
+        }
 }
 
 t_game *init_game(char **map) {
@@ -59,7 +68,7 @@ t_assets *init_assets(t_game *game)
         assets->empty = init_img(game, "./images/empty.xpm");
         assets->banana = init_img(game, "./images/banana_front.xpm");
         assets->background = init_img(game, "./images/background.xpm");
-        views = malloc(sizeof(t_data) * 20);
+        views = malloc(sizeof(t_data) * 40);
         views[NONE] = init_img(game, "./images/empty.xpm");        
         views[FRONT] = init_img(game, "./images/banana_left1.xpm");        
         views[LEFT_1] = init_img(game, "./images/banana_left1.xpm");        
@@ -74,6 +83,9 @@ t_assets *init_assets(t_game *game)
         views[BOTTOM_1] = init_img(game, "./images/banana_bottom1.xpm");        
         views[BOTTOM_2] = init_img(game, "./images/banana_bottom2.xpm");        
         views[BOTTOM_3] = init_img(game, "./images/banana_bottom3.xpm");        
+        views[STAND_1] = init_img(game, "./images/stand1.xpm");        
+        views[STAND_2] = init_img(game, "./images/stand2.xpm");        
+        views[STAND_3] = init_img(game, "./images/stand3.xpm");        
         player->views = views;
         player->off_x = 0;
         player->off_y = 0;

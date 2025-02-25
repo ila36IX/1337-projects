@@ -42,6 +42,9 @@ typedef struct s_data {
 #define BOTTOM_1 10
 #define BOTTOM_2 11
 #define BOTTOM_3 12
+#define STAND_1 13
+#define STAND_2 14
+#define STAND_3 15
 
 typedef struct s_pos {
         int x;
