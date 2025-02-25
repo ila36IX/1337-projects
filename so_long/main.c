@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:49:20 by aljbari           #+#    #+#             */
-/*   Updated: 2025/02/22 21:25:58 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/02/24 14:22:44 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,20 @@ void draw(t_game *game)
                                 draw_img(game, assets->banana, x, y);
         }
 }
+int	release(int keycode, t_game *game)
+{
+        if (keycode == game->keycode)
+                game->keycode = 0;
+        return (0);
+}
+
+void start_move(t_moving_asset *asset, int x, int y)
+{
+        asset->_off_x = 0;
+        asset->off_x = x;
+        asset->_off_y = 0;
+        asset->off_y = y;
+}
 
 int	press(int keycode, t_game *game)
 {
@@ -70,64 +84,52 @@ int	press(int keycode, t_game *game)
                 mlx_destroy_window(game->mlx, game->window);
                 exit(0);
         }
+        game->keycode = keycode;
         if (game->assets->player.off_x || game->assets->player.off_y)
                 return (0);
-        if (keycode == 100 && !game->assets->player.off_x)
-                game->assets->player.off_x = 2;
-        if (keycode == 97 && !game->assets->player.off_y)
-                game->assets->player.off_x = -2;
-        if (keycode == 119 && !game->assets->player.off_x)
-                game->assets->player.off_y = -2;
-        if (keycode == 115 && !game->assets->player.off_x)
-                game->assets->player.off_y = 2;
-
-        /*printf("Pressed\n");*/
+        keycode = game->keycode;
+        if (keycode == 100)
+                start_move(&game->assets->player, FRAME_RATE, 0);
+        if (keycode == 97)
+                start_move(&game->assets->player, -FRAME_RATE, 0);
+        if (keycode == 119)
+                start_move(&game->assets->player, 0, -FRAME_RATE);
+        if (keycode == 115)
+                start_move(&game->assets->player, 0, FRAME_RATE);
         printf("KEY: %d\n", keycode);
         return (0);
 }
 
 int many;
 
+void update_face(int *index, int start)
+{
+        if (*index <= start + 1 && *index >= start)
+                ++*index;
+        else
+                *index = start;
+}
+
 void    handle_moves(t_game *game, t_moving_asset *p)
 {
         if (p->off_x > 0)
         {
-                if (p->curr == RIGHT_1)
-                        p->curr = RIGHT_2;
-                else if (p->curr == RIGHT_2)
-                        p->curr = RIGHT_3;
-                else
-                        p->curr = RIGHT_1;
+                update_face(&p->curr, RIGHT_1);
                 move_right(&game->pos, p);
         }
         else if (p->off_x < 0)
         {
-                if (p->curr == LEFT_1)
-                        p->curr = LEFT_2;
-                else if (p->curr == LEFT_2)
-                        p->curr = LEFT_3;
-                else
-                        p->curr = LEFT_1;
+                update_face(&p->curr, LEFT_1);
                 move_left(&game->pos, p);
         }
         else if (p->off_y > 0)
         {
-                if (p->curr == BOTTOM_1)
-                        p->curr = BOTTOM_2;
-                else if (p->curr == BOTTOM_2)
-                        p->curr = BOTTOM_3;
-                else
-                        p->curr = BOTTOM_1;
+                update_face(&p->curr, BOTTOM_1);
                 move_bottom(&game->pos, p);
         }
         else if (p->off_y < 0)
         {
-                if (p->curr == TOP_1)
-                        p->curr = TOP_2;
-                else if (p->curr == TOP_2)
-                        p->curr = TOP_3;
-                else
-                        p->curr = TOP_1;
+                update_face(&p->curr, TOP_1);
                 move_top(&game->pos, p);
         }
 }
@@ -137,8 +139,11 @@ int _update(t_game *game)
         t_moving_asset *p = &game->assets->player;
 
         handle_moves(game, p);
-        draw_offset_asset(game, p, game->pos.x, game->pos.y);
-        usleep(50000);
+        if (p->off_x || p->off_y)
+                draw_offset_asset(game, p, game->pos.x, game->pos.y);
+        if (game->keycode)
+                press(game->keycode, game);
+        usleep(70000);
         printf("MANY: %d\n", many++);
         return (0);
 }
@@ -148,9 +153,9 @@ int	main(void)
         t_game *game;
         t_assets *assets;
         char *map[100] = {
-                strdup("11111111111110000000000011"),
-                strdup("10000000000010000000000001"),
-                strdup("10000000000010000000P00001"),
+                strdup("10000000000000000000C00001"),
+                strdup("10000000000000000000C00001"),
+                strdup("10000000000000000000C00001"),
                 strdup("10000000000000000000C00001"),
                 strdup("10000000000010000000000001"),
                 strdup("10000000000010000000000001"),
@@ -169,11 +174,12 @@ int	main(void)
         assets = init_assets(game);
         game->assets = assets;
         draw_img(game, game->assets->background, 0, 0);
+        draw_offset_asset(game, &game->assets->player, game->pos.x, game->pos.y);
         /*draw(game);*/
         /*mlx_key_hook(game->window, f, game);*/
         mlx_loop_hook(game->mlx, _update, game);
         mlx_hook(game->window, 02, 1L<<0, press, game);
-        /*mlx_hook(game->window, 03, 1L<<1, release, game);*/
+        mlx_hook(game->window, 03, 1L<<1, release, game);
         /*walk_left(game, &game->assets->player);*/
         mlx_loop(game->mlx);
         return (0);
