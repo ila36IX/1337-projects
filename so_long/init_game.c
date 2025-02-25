@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:28:11 by aljbari           #+#    #+#             */
-/*   Updated: 2025/02/22 17:25:39 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/02/25 13:54:33 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ void *init_img(t_game *game, char *path)
 
 t_game *init_game(char **map) {
         t_game *game;
-        t_pos pos;
 
         game = malloc(sizeof(t_game));
         game->mlx = mlx_init();
@@ -35,23 +34,23 @@ t_game *init_game(char **map) {
         game->win_h = game->map_h * IMG_SIZE;
         game->win_w = game->map_w * IMG_SIZE;
         game->window = mlx_new_window(game->mlx, game->win_w, game->win_h, "Banana");
-        for (int y = 0; y < game->map_h; y++) {
-                for (int x = 0; x < game->map_w; x++)
-                        if (map[y][x] == 'P') {
-                                pos.x = x;
-                                pos.y = y;
-                        }
-        }
+        /*t_pos pos;*/
+        /*for (int y = 0; y < game->map_h; y++) {*/
+        /*        for (int x = 0; x < game->map_w; x++)*/
+        /*                if (map[y][x] == 'P') {*/
+        /*                        pos.x = x;*/
+        /*                        pos.y = y;*/
+        /*                }*/
+        /*}*/
         // game->pos = pos;
         t_pos test = {0, 0};
-        game->pos = test;
         return (game);
 }
 
 t_assets *init_assets(t_game *game)
 {
         t_assets *assets;
-        t_moving_asset player; 
+        t_walker *player = malloc(sizeof(t_walker)); 
         t_data **views;
 
         assets = malloc(sizeof(t_assets));
@@ -75,17 +74,21 @@ t_assets *init_assets(t_game *game)
         views[BOTTOM_1] = init_img(game, "./images/banana_bottom1.xpm");        
         views[BOTTOM_2] = init_img(game, "./images/banana_bottom2.xpm");        
         views[BOTTOM_3] = init_img(game, "./images/banana_bottom3.xpm");        
-        player.views = views;
-        player.off_x = 0;
-        player.off_y = 0;
-        player._off_x = 0;
-        player._off_y = 0;
-        player.curr = 1;
+        player->views = views;
+        player->off_x = 0;
+        player->off_y = 0;
+        player->_off_x = 0;
+        player->_off_y = 0;
+        player->curr = 1;
         assets->player = player;
+        assets->player->pos = malloc(sizeof(t_pos));
+        assets->player->pos->x = 0;
+        assets->player->pos->y = 0;
         return (assets);
 }
 
-void put_pixel(t_data *data, int x, int y, int color) {
+void put_pixel(t_data *data, int x, int y, int color)
+{
         char *dst;
 
         dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
