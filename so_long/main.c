@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:49:20 by aljbari           #+#    #+#             */
-/*   Updated: 2025/02/24 14:22:44 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/02/25 13:53:55 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-int	render_next_frame(void *YourStruct);
 
 void draw_img(t_game *game, t_data *asset, int pex_x, int pex_y)
 {
@@ -28,22 +27,22 @@ void draw_img(t_game *game, t_data *asset, int pex_x, int pex_y)
         mlx_put_image_to_window(game->mlx, game->window, asset, x, y);
 }
 
-void walk(t_game *game, void *object)
-{
-        t_assets *assets;
-
-        assets = game->assets;
-        for (int y = 0; y < game->map_h; y++)
-        {
-                for (int x = 0; x < game->map_w; x++)
-                        if (game->map[y][x] == '1')
-                                draw_img(game, assets->wall, x, y);
-                        else if (game->map[y][x] == 'C')
-                                draw_img(game, assets->peel, x, y);
-                        else if (game->map[y][x] == 'P')
-                                draw_img(game, assets->banana, x, y);
-        }
-}
+/*void walk(t_game *game, void *object)*/
+/*{*/
+/*        t_assets *assets;*/
+/**/
+/*        assets = game->assets;*/
+/*        for (int y = 0; y < game->map_h; y++)*/
+/*        {*/
+/*                for (int x = 0; x < game->map_w; x++)*/
+/*                        if (game->map[y][x] == '1')*/
+/*                                draw_img(game, assets->wall, x, y);*/
+/*                        else if (game->map[y][x] == 'C')*/
+/*                                draw_img(game, assets->peel, x, y);*/
+/*                        else if (game->map[y][x] == 'P')*/
+/*                                draw_img(game, assets->banana, x, y);*/
+/*        }*/
+/*}*/
 
 void draw(t_game *game)
 {
@@ -68,34 +67,74 @@ int	release(int keycode, t_game *game)
         return (0);
 }
 
-void start_move(t_moving_asset *asset, int x, int y)
+int can_move(t_game *game, t_walker *obj, int x, int y)
 {
-        asset->_off_x = 0;
-        asset->off_x = x;
-        asset->_off_y = 0;
-        asset->off_y = y;
+        int next_y;// next_y = obj->pos->x + (x > 0 ? 1 : (x == 0 ? 0 : -1));
+        int next_x; //next_x = obj->pos->y + (y > 0 ? 1 : (y == 0 ? 0 : -1));
+        char c;
+
+        next_y = obj->pos->y + -1 * (y < 0) + (y > 0);
+        next_x = obj->pos->x + -1 * (x < 0) + (x > 0);
+        /*if (y > 0)*/
+        /*        next_y = obj->pos->x + 1;*/
+        /*else if (x == 0)*/
+        /*        next_y = obj->pos->x;*/
+        /*else*/
+        /*        next_y = obj->pos->x - 1;*/
+        /*if (x > 0)*/
+        /*        next_x = obj->pos->y + 1;*/
+        /*else if (y == 0)*/
+        /*        next_x = obj->pos->y;*/
+        /*else*/
+        /*        next_x = obj->pos->y - 1;*/
+        if (next_y < 0 || next_y > game->map_h - 1 || next_x < 0 || next_x > game->map_w - 1)
+                return (0);
+        c = game->map[next_y][next_x];
+        if (c == '1')
+                return (0);
+        return (1);
 }
 
+void walk(t_game *game, t_walker *obj, int x, int y)
+{
+        if (!can_move(game, obj, x, y))
+        {
+                game->keycode = 0;
+                return ;
+        }
+        obj->off_x = x;
+        obj->off_y = y;
+        obj->_off_x = 0;
+        obj->_off_y = 0;
+}
+
+/* Todo: Double free accures because this function is called many times */
+void quit(t_game *game)
+{
+        mlx_loop_end (game->mlx);
+        mlx_destroy_window(game->mlx, game->window);
+
+        /* Free everything... */
+}
 int	press(int keycode, t_game *game)
 {
+        t_walker *w;
+
+        w = game->assets->player;
         if (keycode == 65307)
-        {
-                mlx_loop_end (game->mlx);
-                mlx_destroy_window(game->mlx, game->window);
-                exit(0);
-        }
+                quit(game);
         game->keycode = keycode;
-        if (game->assets->player.off_x || game->assets->player.off_y)
+        if (w->off_x || w->off_y)
                 return (0);
         keycode = game->keycode;
         if (keycode == 100)
-                start_move(&game->assets->player, FRAME_RATE, 0);
+                walk(game, w, FRAME_RATE, 0);
         if (keycode == 97)
-                start_move(&game->assets->player, -FRAME_RATE, 0);
+                walk(game, w, -FRAME_RATE, 0);
         if (keycode == 119)
-                start_move(&game->assets->player, 0, -FRAME_RATE);
+                walk(game, w, 0, -FRAME_RATE);
         if (keycode == 115)
-                start_move(&game->assets->player, 0, FRAME_RATE);
+                walk(game, w, 0, FRAME_RATE);
         printf("KEY: %d\n", keycode);
         return (0);
 }
@@ -110,41 +149,41 @@ void update_face(int *index, int start)
                 *index = start;
 }
 
-void    handle_moves(t_game *game, t_moving_asset *p)
+void    handle_moves(t_game *game, t_walker *p)
 {
         if (p->off_x > 0)
         {
                 update_face(&p->curr, RIGHT_1);
-                move_right(&game->pos, p);
+                move_right(p);
         }
         else if (p->off_x < 0)
         {
                 update_face(&p->curr, LEFT_1);
-                move_left(&game->pos, p);
+                move_left(p);
         }
         else if (p->off_y > 0)
         {
                 update_face(&p->curr, BOTTOM_1);
-                move_bottom(&game->pos, p);
+                move_bottom(p);
         }
         else if (p->off_y < 0)
         {
                 update_face(&p->curr, TOP_1);
-                move_top(&game->pos, p);
+                move_top(p);
         }
 }
 
 int _update(t_game *game)
 {
-        t_moving_asset *p = &game->assets->player;
+        t_walker *p = game->assets->player;
 
         handle_moves(game, p);
         if (p->off_x || p->off_y)
-                draw_offset_asset(game, p, game->pos.x, game->pos.y);
+                draw_walker(game, p);
         if (game->keycode)
                 press(game->keycode, game);
-        usleep(70000);
-        printf("MANY: %d\n", many++);
+        usleep(55000);
+        /*printf("MANY: %d\n", many++);*/
         return (0);
 }
 
@@ -153,7 +192,6 @@ int	main(void)
         t_game *game;
         t_assets *assets;
         char *map[100] = {
-                strdup("10000000000000000000C00001"),
                 strdup("10000000000000000000C00001"),
                 strdup("10000000000000000000C00001"),
                 strdup("10000000000000000000C00001"),
@@ -174,8 +212,8 @@ int	main(void)
         assets = init_assets(game);
         game->assets = assets;
         draw_img(game, game->assets->background, 0, 0);
-        draw_offset_asset(game, &game->assets->player, game->pos.x, game->pos.y);
-        /*draw(game);*/
+        draw_walker(game, game->assets->player);
+        draw(game);
         /*mlx_key_hook(game->window, f, game);*/
         mlx_loop_hook(game->mlx, _update, game);
         mlx_hook(game->window, 02, 1L<<0, press, game);
