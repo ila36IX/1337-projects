@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 11:12:00 by aljbari           #+#    #+#             */
-/*   Updated: 2025/02/26 21:18:21 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/02/26 23:10:28 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,9 +80,11 @@ typedef struct s_assets {
         /* static */
         t_data *background;
         t_data *wall;
+        t_data *wall_left;
         t_data *empty;
         t_data *peel;
         t_data *banana;
+        t_data **numbers;
         t_data *exit;
 
         /* dynamic */
@@ -105,6 +107,7 @@ typedef struct s_game {
         int *keycode;
         int speed;
         int frames;
+        unsigned int steps;
 } t_game;
 
 
@@ -121,3 +124,4 @@ void	move_left(t_walker *asset);
 void	move_right(t_walker *asset);
 void	move_bottom(t_walker *asset);
 void	move_top(t_walker *asset);
+void    rander_steps_counter(t_game *game, int steps);

@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:49:20 by aljbari           #+#    #+#             */
-/*   Updated: 2025/02/26 21:19:16 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/02/26 23:12:14 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void draw_img(t_game *game, t_data *asset, int pex_x, int pex_y)
 
         x = pex_x * IMG_SIZE;
         y = pex_y * IMG_SIZE;
-        mlx_put_image_to_window(game->mlx, game->window, asset, x, y);
+        mlx_put_image_to_window(game->mlx, game->window, asset, x, y + 120);
 }
 
 /*void walk(t_game *game, void *object)*/
@@ -52,12 +52,20 @@ void draw(t_game *game)
         for (int y = 0; y < game->map_h; y++)
         {
                 for (int x = 0; x < game->map_w; x++)
+                {
                         if (game->map[y][x] == '1')
-                                draw_img(game, assets->wall, x, y);
+                        {
+                                /*if (x == 0)*/
+                                /*        draw_img(game, assets->wall_left, x, y);*/
+                                /*else*/
+                                        draw_img(game, assets->wall, x, y);
+
+                        }
                         else if (game->map[y][x] == 'C')
                                 draw_img(game, assets->peel, x, y);
                         else if (game->map[y][x] == 'P')
                                 draw_img(game, assets->banana, x, y);
+                }
         }
 }
 
@@ -89,6 +97,7 @@ int can_move(t_game *game, t_walker *obj, int x, int y)
         c = game->map[next_y][next_x];
         if (c == '1')
                 return (0);
+        game->steps++;
         return (1);
 }
 
@@ -204,13 +213,14 @@ void debug(t_game *game, unsigned int i)
         printf("%s", game->keycode[KEY_UP] ? "🠱 " : "");
         printf("%s", game->keycode[KEY_DOWN] ? "🠯 " : "");
         printf("\n");
-        printf("%10s: %10d\n", "Loops", i);
+        printf("%10s: %10d\n", "LOOPS", i);
+        printf("%10s: %10d\n", "STEPS", game->steps);
         /* Sepirator */
         printf("\n");
 }
 
-#define SPEED 300
-#define IMAGES 2700
+#define SPEED 350
+#define IMAGES 2000
 
 int _update(t_game *game)
 {
@@ -224,6 +234,7 @@ int _update(t_game *game)
         {
                 move(game, p);
                 draw_walker(game, p);
+                rander_steps_counter(game, game->steps);
         }
         if (i % IMAGES == 0)
                 next_img(game, p);
@@ -237,20 +248,20 @@ int	main(void)
         t_game *game;
         t_assets *assets;
         char *map[100] = {
-                strdup("0P000000000000000000C00001"),
-                strdup("10000000000000000000C00001"),
+                strdup("11111111111111111111111111"),
+                strdup("1P000000000000000000C00001"),
                 strdup("10000000000000000000C00001"),
                 strdup("10000000000010000000000001"),
                 strdup("10000000000010000000000001"),
                 strdup("10000000000010000000000001"),
                 strdup("11111011111111111110111111"),
-                strdup("10000000000010000000000000"),
-                strdup("10000000000010000000C00000"),
-                strdup("10000000000010000000000000"),
-                strdup("10000000000000000000C00000"),
-                strdup("10000000000010000000000000"),
                 strdup("10000000000010000000000001"),
-                strdup("11000000000011111111111111"),
+                strdup("10000000000010000000C00001"),
+                strdup("10000000000010000000000001"),
+                strdup("10000000000000000000C00001"),
+                strdup("10000000000010000000000001"),
+                strdup("10000000000010000000000001"),
+                strdup("11111111111111111111111111"),
         };
 
         game = init_game((char **) map);
