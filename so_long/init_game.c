@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:28:11 by aljbari           #+#    #+#             */
-/*   Updated: 2025/02/25 13:54:33 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/02/26 20:45:00 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,21 @@ t_assets *init_assets(t_game *game)
         player->curr = 1;
         assets->player = player;
         assets->player->pos = malloc(sizeof(t_pos));
-        assets->player->pos->x = 0;
-        assets->player->pos->y = 0;
+        game->keycode = malloc(sizeof(int) * 4);
+        game->keycode[0] = 0;
+        game->keycode[1] = 0;
+        game->keycode[2] = 0;
+        game->keycode[3] = 0;
+        game->speed = 0;
+        game->frames = 0;
+        for (int y = 0; y < game->map_h; y++) {
+                for (int x = 0; x < game->map_w; x++)
+                        if (game->map[y][x] == 'P') {
+                                assets->player->pos->x = x;
+                                assets->player->pos->y = y;
+                        }
+        }
+        // game->pos = pos;
         return (assets);
 }
 

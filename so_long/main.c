@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:49:20 by aljbari           #+#    #+#             */
-/*   Updated: 2025/02/25 13:53:55 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/02/26 21:19:16 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,19 @@ void draw(t_game *game)
                                 draw_img(game, assets->banana, x, y);
         }
 }
+
 int	release(int keycode, t_game *game)
 {
-        if (keycode == game->keycode)
-                game->keycode = 0;
+        printf("KEY RELEASE\n");
+        if (keycode == 100)
+                game->keycode[KEY_RIGHT] = 0;
+        if (keycode == 97)
+                game->keycode[KEY_LEFT] = 0;
+        if (keycode == 119)
+                game->keycode[KEY_UP] = 0;
+        if (keycode == 115)
+                game->keycode[KEY_DOWN] = 0;
+
         return (0);
 }
 
@@ -75,18 +84,6 @@ int can_move(t_game *game, t_walker *obj, int x, int y)
 
         next_y = obj->pos->y + -1 * (y < 0) + (y > 0);
         next_x = obj->pos->x + -1 * (x < 0) + (x > 0);
-        /*if (y > 0)*/
-        /*        next_y = obj->pos->x + 1;*/
-        /*else if (x == 0)*/
-        /*        next_y = obj->pos->x;*/
-        /*else*/
-        /*        next_y = obj->pos->x - 1;*/
-        /*if (x > 0)*/
-        /*        next_x = obj->pos->y + 1;*/
-        /*else if (y == 0)*/
-        /*        next_x = obj->pos->y;*/
-        /*else*/
-        /*        next_x = obj->pos->y - 1;*/
         if (next_y < 0 || next_y > game->map_h - 1 || next_x < 0 || next_x > game->map_w - 1)
                 return (0);
         c = game->map[next_y][next_x];
@@ -98,10 +95,7 @@ int can_move(t_game *game, t_walker *obj, int x, int y)
 void walk(t_game *game, t_walker *obj, int x, int y)
 {
         if (!can_move(game, obj, x, y))
-        {
-                game->keycode = 0;
                 return ;
-        }
         obj->off_x = x;
         obj->off_y = y;
         obj->_off_x = 0;
@@ -115,7 +109,18 @@ void quit(t_game *game)
         mlx_destroy_window(game->mlx, game->window);
 
         /* Free everything... */
+        exit(0);
 }
+void    reset_kyes(t_game *game)
+{
+        game->keycode[KEY_RIGHT] = 0;
+        game->keycode[KEY_LEFT] = 0;
+        game->keycode[KEY_UP] = 0;
+        game->keycode[KEY_DOWN] = 0;
+}
+
+unsigned int many;
+
 int	press(int keycode, t_game *game)
 {
         t_walker *w;
@@ -123,23 +128,17 @@ int	press(int keycode, t_game *game)
         w = game->assets->player;
         if (keycode == 65307)
                 quit(game);
-        game->keycode = keycode;
-        if (w->off_x || w->off_y)
-                return (0);
-        keycode = game->keycode;
         if (keycode == 100)
-                walk(game, w, FRAME_RATE, 0);
+                game->keycode[KEY_RIGHT] = 1;
         if (keycode == 97)
-                walk(game, w, -FRAME_RATE, 0);
+                game->keycode[KEY_LEFT] = 1;
         if (keycode == 119)
-                walk(game, w, 0, -FRAME_RATE);
+                game->keycode[KEY_UP] = 1;
         if (keycode == 115)
-                walk(game, w, 0, FRAME_RATE);
-        printf("KEY: %d\n", keycode);
+                game->keycode[KEY_DOWN] = 1;
         return (0);
 }
 
-int many;
 
 void update_face(int *index, int start)
 {
@@ -149,47 +148,87 @@ void update_face(int *index, int start)
                 *index = start;
 }
 
-void    handle_moves(t_game *game, t_walker *p)
+void next_img(t_game *game, t_walker *p)
+{
+        if (!p->off_x && !p->off_y)
+        {
+                for (int i = 0; i <= 4; i++)
+                        if (game->keycode[i])
+                                return ;
+                update_face(&p->curr, STAND_1);
+        }
+        else if (p->off_x > 0)
+                update_face(&p->curr, RIGHT_1);
+        else if (p->off_x < 0)
+                update_face(&p->curr, LEFT_1);
+        else if (p->off_y > 0)
+                update_face(&p->curr, BOTTOM_1);
+        else if (p->off_y < 0)
+                update_face(&p->curr, TOP_1);
+
+}
+
+void    move(t_game *game, t_walker *p)
 {
         if (p->off_x > 0)
-        {
-                update_face(&p->curr, RIGHT_1);
                 move_right(p);
-        }
         else if (p->off_x < 0)
-        {
-                update_face(&p->curr, LEFT_1);
                 move_left(p);
-        }
         else if (p->off_y > 0)
-        {
-                update_face(&p->curr, BOTTOM_1);
                 move_bottom(p);
-        }
         else if (p->off_y < 0)
-        {
-                update_face(&p->curr, TOP_1);
                 move_top(p);
-        }
 }
+void inputs(t_game *game)
+{
+        t_walker *w = game->assets->player;
+
+        if (game->keycode[KEY_RIGHT])
+                walk(game, w, FRAME_RATE, 0);
+        else if (game->keycode[KEY_LEFT])
+                walk(game, w, -FRAME_RATE, 0);
+        else if (game->keycode[KEY_UP])
+                walk(game, w, 0, -FRAME_RATE);
+        else if (game->keycode[KEY_DOWN])
+                walk(game, w, 0, FRAME_RATE);
+}
+
+void debug(t_game *game, unsigned int i)
+{
+        printf("%10s: (%d, %d)\n", "GRID", game->assets->player->pos->x, game->assets->player->pos->y);
+        printf("%10s: (%d, %d)\n", "OFFSET", game->assets->player->off_x, game->assets->player->off_y);
+        printf("%10s: (%d, %d)\n", "_OFFSET", game->assets->player->_off_x, game->assets->player->_off_y);
+        printf("%10s: ", "INPUTS");
+        printf("%s", game->keycode[KEY_RIGHT] ? "🠲  " : "");
+        printf("%s", game->keycode[KEY_LEFT] ? "🠰  " : "");
+        printf("%s", game->keycode[KEY_UP] ? "🠱 " : "");
+        printf("%s", game->keycode[KEY_DOWN] ? "🠯 " : "");
+        printf("\n");
+        printf("%10s: %10d\n", "Loops", i);
+        /* Sepirator */
+        printf("\n");
+}
+
+#define SPEED 300
+#define IMAGES 2700
 
 int _update(t_game *game)
 {
         t_walker *p = game->assets->player;
+        static unsigned int i;
 
-        handle_moves(game, p);
-        if (p->off_x || p->off_y)
-                draw_walker(game, p);
-        else
+        i++;
+        if (!p->off_x && !p->off_y)
+                inputs(game);
+        if (i % SPEED == 0)
         {
-                draw_img(game, p->views[p->curr], p->pos->x, p->pos->y);
-                update_face(&p->curr, STAND_1);
-                usleep(75000);
+                move(game, p);
+                draw_walker(game, p);
         }
-        if (game->keycode)
-                press(game->keycode, game);
-        usleep(45000);
-        /*printf("MANY: %d\n", many++);*/
+        if (i % IMAGES == 0)
+                next_img(game, p);
+        debug(game, i);
+        /*usleep(500);*/
         return (0);
 }
 
@@ -198,7 +237,7 @@ int	main(void)
         t_game *game;
         t_assets *assets;
         char *map[100] = {
-                strdup("10000000000000000000C00001"),
+                strdup("0P000000000000000000C00001"),
                 strdup("10000000000000000000C00001"),
                 strdup("10000000000000000000C00001"),
                 strdup("10000000000010000000000001"),
@@ -220,10 +259,11 @@ int	main(void)
         draw_img(game, game->assets->background, 0, 0);
         draw_walker(game, game->assets->player);
         draw(game);
-        /*mlx_key_hook(game->window, f, game);*/
+        /*mlx_key_hook(game->window, press, game);*/
         mlx_loop_hook(game->mlx, _update, game);
-        mlx_hook(game->window, 02, 1L<<0, press, game);
-        mlx_hook(game->window, 03, 1L<<1, release, game);
+        mlx_hook(game->window, 2, 1L<<0, press, game);
+        mlx_do_key_autorepeaton(game->mlx);
+        mlx_hook(game->window, 3, 1L<<1, release, game);
         /*walk_left(game, &game->assets->player);*/
         mlx_loop(game->mlx);
         return (0);
