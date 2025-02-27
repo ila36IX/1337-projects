@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 11:12:00 by aljbari           #+#    #+#             */
-/*   Updated: 2025/02/26 23:10:28 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/02/27 12:13:11 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,15 @@
 #include <string.h>
 #include <unistd.h>
 
+#define BASE 10000 
 #define IMG_SIZE 64
+
 #define FRAME_RATE 4
+#define SPEED 1200
+#define FRAMES 13
+
+#define BASE_SPEED (BASE / SPEED)
+#define IMAGES (((BASE / SPEED) * IMG_SIZE) / FRAMES)
 
 typedef struct s_data {
         void *img;
@@ -37,23 +44,24 @@ typedef enum {
 } KeyCode;
 
 
-#define FRONT 19
-#define NONE 0
-#define RIGHT_1 1
-#define RIGHT_2 2
-#define RIGHT_3 3
-#define LEFT_1 4
-#define LEFT_2 5
-#define LEFT_3 6
-#define TOP_1 7
-#define TOP_2 8
-#define TOP_3 9
-#define BOTTOM_1 10
-#define BOTTOM_2 11
-#define BOTTOM_3 12
-#define STAND_1 13
-#define STAND_2 14
-#define STAND_3 15
+enum {
+        RIGHT_1,
+        RIGHT_2,
+        RIGHT_3,
+        LEFT_1,
+        LEFT_2,
+        LEFT_3,
+        TOP_1,
+        TOP_2,
+        TOP_3,
+        BOTTOM_1,
+        BOTTOM_2,
+        BOTTOM_3,
+        STAND_1,
+        STAND_2,
+        STAND_3,
+        VIEWS_END,
+};
 
 typedef struct s_pos {
         int x;
@@ -79,11 +87,11 @@ typedef struct s_walker {
 typedef struct s_assets {
         /* static */
         t_data *background;
+        t_data *header;
+        t_data *header_counter;
         t_data *wall;
-        t_data *wall_left;
         t_data *empty;
         t_data *peel;
-        t_data *banana;
         t_data **numbers;
         t_data *exit;
 
@@ -101,9 +109,6 @@ typedef struct s_game {
         int map_h; /* --- */
         int map_w; /* | */
         t_assets *assets;
-        char *curr_face;
-        int x_transform;
-        int y_transform;
         int *keycode;
         int speed;
         int frames;
@@ -125,3 +130,4 @@ void	move_right(t_walker *asset);
 void	move_bottom(t_walker *asset);
 void	move_top(t_walker *asset);
 void    rander_steps_counter(t_game *game, int steps);
+void clear_game(t_game *game);

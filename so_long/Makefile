@@ -3,7 +3,7 @@ SRC= $(wildcard *.c)
 OBJ= $(SRC:%.c=%.o)
 
 $(NAME): mlx_linux/libmlx.a $(OBJ) 
-	$(CC) $(OBJ) -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz -g -o $(NAME)
+	$(CC) $(OBJ) -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz -g  -ggdb3 -o $(NAME)
 
 mlx_linux/libmlx.a:
 	curl https://cdn.intra.42.fr/document/document/30831/minilibx-linux.tgz -o mlx_linux.tgz
@@ -13,7 +13,7 @@ mlx_linux/libmlx.a:
 	make -C mlx_linux
 
 %.o: %.c
-	$(CC)  -I/usr/include -Imlx_linux -O3 -c $< -o $@
+	$(CC)  -I/usr/include -Imlx_linux -O3 -c  -ggdb3 $< -o $@
 
 run: $(NAME)
 	./$(NAME)
