@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:28:11 by aljbari           #+#    #+#             */
-/*   Updated: 2025/02/27 12:13:39 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/03/01 11:37:33 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,6 @@ t_walker *init_player(t_game *game)
         player->_off_x = 0;
         player->_off_y = 0;
         player->curr = STAND_1;
-        printf("INIT CURRENT: %d\n", player->curr);
         player->pos = malloc(sizeof(t_pos));
         for (int y = 0; y < game->map_h; y++) {
                 for (int x = 0; x < game->map_w; x++)
@@ -101,18 +100,6 @@ t_walker *init_player(t_game *game)
 
 void    rander_steps_counter(t_game *game, int steps)
 {
-        // 40 width of the digit imgae
-        // game->assets->numbers
-        // massets->numbers[0] = init_img(game, "./images/digit0.xpm");
-        // massets->numbers[1] = init_img(game, "./images/digit1.xpm");
-        // massets->numbers[2] = init_img(game, "./images/digit2.xpm");
-        // massets->numbers[3] = init_img(game, "./images/digit3.xpm");
-        // massets->numbers[4] = init_img(game, "./images/digit4.xpm");
-        // massets->numbers[5] = init_img(game, "./images/digit5.xpm");
-        // massets->numbers[6] = init_img(game, "./images/digit6.xpm");
-        // massets->numbers[8] = init_img(game, "./images/digit8.xpm");
-        // massets->numbers[7] = init_img(game, "./images/digit7.xpm");
-        // massets->numbers[9] = init_img(game, "./images/digit9.xpm");
         mlx_put_image_to_window(game->mlx, game->window,
                                 game->assets->numbers[(steps / 1000) % 10],
                                 264 - 40 * 3, 30);
@@ -124,6 +111,63 @@ void    rander_steps_counter(t_game *game, int steps)
                                 30);
         mlx_put_image_to_window(game->mlx, game->window,
                                 game->assets->numbers[steps % 10], 264, 30);
+}
+
+t_walker        *init_enemy(t_game *game, int x, int y)
+{
+        t_walker *enemy;
+        t_data **views;
+
+        enemy = malloc(sizeof(t_walker)); 
+        views = malloc(sizeof(t_data) * VIEWS_END + 1);
+        views[LEFT_1] = init_img(game, "./images/monster_left1.xpm");        
+        views[LEFT_2] = init_img(game, "./images/monster_left2.xpm");        
+        views[LEFT_3] = init_img(game, "./images/monster_left3.xpm");        
+        views[RIGHT_1] = init_img(game, "./images/monster_right1.xpm");        
+        views[RIGHT_2] = init_img(game, "./images/monster_right2.xpm");        
+        views[RIGHT_3] = init_img(game, "./images/monster_right1.xpm");        
+        views[TOP_1] = init_img(game, "./images/monster_up1.xpm");        
+        views[TOP_2] = init_img(game, "./images/monster_up2.xpm");        
+        views[TOP_3] = init_img(game, "./images/monster_up3.xpm");        
+        views[BOTTOM_1] = init_img(game, "./images/monster_down1.xpm");        
+        views[BOTTOM_2] = init_img(game, "./images/monster_down2.xpm");        
+        views[BOTTOM_3] = init_img(game, "./images/monster_down3.xpm");        
+        views[STAND_1] = init_img(game, "./images/monster_right1.xpm");        
+        views[STAND_2] = init_img(game, "./images/monster_right2.xpm");        
+        views[STAND_3] = init_img(game, "./images/monster_right3.xpm");  
+        views[VIEWS_END] = NULL;
+        enemy->views = views;
+        enemy->off_x = 0;
+        enemy->off_y = 0;
+        enemy->_off_x = 0;
+        enemy->_off_y = 0;
+        enemy->curr = STAND_1;
+        enemy->pos = malloc(sizeof(t_pos));
+        enemy->pos->x = x;
+        enemy->pos->y = y;
+        enemy->direction = DIRECTION_LEFT;
+        return (enemy);
+}
+
+t_walker    **init_enemies(t_game *game)
+{
+
+        int i = 0;
+        t_walker **enemies;
+
+        enemies = malloc(sizeof(t_walker) * 10);
+        for (int y = 0; y < game->map_h; y++)
+        {
+                for (int x = 0; x < game->map_w; x++)
+                        if (game->map[y][x] == 'E')
+                        {
+                                enemies[i] = init_enemy(game, x, y);
+                                game->map[y][x] = '0';
+                                i++;
+                        }
+        }
+        enemies[i] = NULL;
+        return (enemies);
 }
 
 t_assets *init_assets(t_game *game)
@@ -158,6 +202,7 @@ t_assets *init_assets(t_game *game)
                 x += 600;
         }
         assets->player = init_player(game);
+        assets->enemies = init_enemies(game);
         game->keycode = malloc(sizeof(int) * 4);
         game->keycode[0] = 0;
         game->keycode[1] = 0;

@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 11:12:00 by aljbari           #+#    #+#             */
-/*   Updated: 2025/02/27 12:13:11 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/02/28 19:18:04 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,13 @@ typedef enum {
         KEY_DOWN,    // 3
         KEY_SPACE,   // 4
 } KeyCode;
+
+enum {
+        DIRECTION_LEFT,    // 0
+        DIRECTION_RIGHT,   // 1
+        DIRECTION_UP,      // 2
+        DIRECTION_DOWN,    // 3
+};
 
 
 enum {
@@ -81,6 +88,7 @@ typedef struct s_walker {
          */
         int _off_x;
         int _off_y;
+        int direction;
         t_pos *pos;
 } t_walker;
 
@@ -97,6 +105,7 @@ typedef struct s_assets {
 
         /* dynamic */
         t_walker *player;
+        t_walker **enemies;
 } t_assets;
 
 
@@ -131,3 +140,4 @@ void	move_bottom(t_walker *asset);
 void	move_top(t_walker *asset);
 void    rander_steps_counter(t_game *game, int steps);
 void clear_game(t_game *game);
+void    move_to_next_cell(t_game *game, t_walker *p);

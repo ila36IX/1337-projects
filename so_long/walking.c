@@ -9,7 +9,6 @@ void draw_walker(t_game *game, t_walker *charachter)
         t_data *view;
         t_data *erase;
 
-        printf("CURRNET: %d\n", charachter->curr);
         view = charachter->views[charachter->curr];
         erase = game->assets->empty;
         mlx_put_image_to_window(game->mlx, game->window, erase,
@@ -17,9 +16,21 @@ void draw_walker(t_game *game, t_walker *charachter)
                                 charachter->pos->y * IMG_SIZE + charachter->_off_y + 120);
         mlx_put_image_to_window(game->mlx, game->window, view,
                                 charachter->pos->x * IMG_SIZE + charachter->off_x,
-                                charachter->pos->y* IMG_SIZE + charachter->off_y + 120);
+                                charachter->pos->y * IMG_SIZE + charachter->off_y + 120);
         charachter->_off_x = charachter->off_x;
         charachter->_off_y = charachter->off_y;
+}
+
+void    move_to_next_cell(t_game *game, t_walker *p)
+{
+        if (p->off_x > 0)
+                move_right(p);
+        else if (p->off_x < 0)
+                move_left(p);
+        else if (p->off_y > 0)
+                move_bottom(p);
+        else if (p->off_y < 0)
+                move_top(p);
 }
 
 void move_left(t_walker *asset)

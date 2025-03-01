@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:49:20 by aljbari           #+#    #+#             */
-/*   Updated: 2025/02/27 12:14:35 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/03/01 12:13:11 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ int	release(int keycode, t_game *game)
         return (0);
 }
 
+
 int can_move(t_game *game, t_walker *obj, int x, int y)
 {
         int next_y;// next_y = obj->pos->x + (x > 0 ? 1 : (x == 0 ? 0 : -1));
@@ -92,15 +93,23 @@ int can_move(t_game *game, t_walker *obj, int x, int y)
                 return (0);
         if (c == 'C')
         {
-                game->map[next_y][next_x] = '0';
-                printf("COLLECTABLE HAVE BEEN TAKEN\n");
+                if (game->assets->player == obj)
+                {
+                        game->map[next_y][next_x] = '0';
+                        printf("COLLECTABLE HAVE BEEN TAKEN\n");
+                }
+                else
+                        return (0);
         }
-        game->steps++;
+        if (obj == game->assets->player)
+                game->steps++;
         return (1);
 }
 
 void walk(t_game *game, t_walker *obj, int x, int y)
 {
+        if (obj->off_x || obj->off_y)
+                return ;
         if (!can_move(game, obj, x, y))
                 return ;
         obj->off_x = x;
@@ -176,17 +185,7 @@ void next_img(t_game *game, t_walker *p)
 
 }
 
-void    move(t_game *game, t_walker *p)
-{
-        if (p->off_x > 0)
-                move_right(p);
-        else if (p->off_x < 0)
-                move_left(p);
-        else if (p->off_y > 0)
-                move_bottom(p);
-        else if (p->off_y < 0)
-                move_top(p);
-}
+
 void process_keys_events(t_game *game)
 {
         t_walker *w = game->assets->player;
@@ -217,13 +216,85 @@ void debug(t_game *game, unsigned int i)
         printf("%s", game->keycode[KEY_UP] ? "🠱 " : "");
         printf("%s", game->keycode[KEY_DOWN] ? "🠯 " : "");
         printf("\n");
-        printf("%10s: %10d\n", "LOOPS", i);
         printf("%10s: %10d\n", "STEPS", game->steps);
+        printf("%10s: (%d, %d)\n", "ENEMY 0", game->assets->enemies[0]->pos->x,
+               game->assets->enemies[0]->pos->y);
+        printf("%10s: (%d, %d)\n", "GRID", game->assets->enemies[0]->pos->x,
+               game->assets->player->pos->y);
+        printf("%10s: (%d, %d)\n", "OFFSET", game->assets->enemies[0]->off_x,
+               game->assets->enemies[0]->off_y);
+        printf("%10s: (%d, %d)\n", "_OFFSET", game->assets->enemies[0]->_off_x,
+               game->assets->player->_off_y);
+        printf("%10s: %d\n", "DIRECTION", game->assets->enemies[0]->direction);
+        printf("%10s: %10d\n", "LOOPS", i);
 
         /* Sepirator */
         printf("\n");
 }
 
+#include <time.h>
+
+void move_enemies(t_game *game, unsigned int curr_frame)
+{
+        int i = 0;
+        t_walker **enemies;
+        int random_number;
+
+        enemies = game->assets->enemies;
+        srand(time(NULL));
+        while (enemies[i])
+        {
+                random_number = rand() % 4;
+                enemies[i]->direction = random_number;
+                if (enemies[i]->direction == DIRECTION_DOWN && can_move(game, enemies[i], 0, FRAME_RATE))
+                        walk(game, enemies[i], 0, FRAME_RATE);
+                else if (enemies[i]->direction == DIRECTION_UP && can_move(game, enemies[i], 0, -FRAME_RATE))
+                        walk(game, enemies[i], 0, -FRAME_RATE);
+                else if (enemies[i]->direction == DIRECTION_RIGHT && can_move(game, enemies[i], FRAME_RATE, 0))
+                        walk(game, enemies[i], FRAME_RATE, 0);
+                else if (enemies[i]->direction == DIRECTION_LEFT && can_move(game, enemies[i], -FRAME_RATE, 0))
+                        walk(game, enemies[i], -FRAME_RATE, 0);
+                else
+                {
+                        enemies[i]->direction++;
+                        if (enemies[i]->direction > DIRECTION_DOWN)
+                                enemies[i]->direction = curr_frame % 4;
+                }
+                move_to_next_cell(game, enemies[i]);
+                draw_walker(game, enemies[i]);
+                i++;
+        }
+
+}
+int abs(int n)
+{
+        if (n < 0)
+                return (n * -1);
+        else
+                return (n);
+
+}
+int collision(t_walker *player, t_walker *enemy)
+{
+        int enemy_x;
+        int player_x;
+        int enemy_y;
+        int player_y;
+        static unsigned int collisions_cout;
+
+        enemy_x = enemy->off_x + enemy->pos->x * IMG_SIZE;
+        enemy_y = enemy->off_y + enemy->pos->y * IMG_SIZE;
+        player_x = player->off_x + player->pos->x * IMG_SIZE;
+        player_y = player->off_y + player->pos->y * IMG_SIZE;
+        if (abs(enemy_x - player_x) < IMG_SIZE && abs(enemy_y - player_y) < IMG_SIZE)
+        {
+                printf("You've been elimenated by the monster :(\n");
+                exit(1);
+                collisions_cout++;
+
+        }
+        return (1);
+}
 
 void rander(t_game *game, unsigned int i)
 {
@@ -232,13 +303,24 @@ void rander(t_game *game, unsigned int i)
 
         if (i % BASE_SPEED == 0)
         {
-                move(game, player);
+                int i = 0;
+                while (game->assets->enemies[i])
+                {
+                        collision(game->assets->player, game->assets->enemies[i]);
+                        i++;
+                }
+                move_enemies(game, i);
+                move_to_next_cell(game, player);
                 draw_walker(game, player);
                 rander_steps_counter(game, game->steps);
-                printf("COUNT OF DRAWS: %10d\n", many_prints);
         }
         if (i % IMAGES == 0)
+        {
                 next_img(game, player);
+                next_img(game, game->assets->enemies[0]);
+                next_img(game, game->assets->enemies[1]);
+                next_img(game, game->assets->enemies[2]);
+        }
 }
 
 int _update(t_game *game)
@@ -260,17 +342,17 @@ int	main(void)
         char *map[100] = {
                 strdup("11111111111111111111111111"),
                 strdup("1P000000000000000000C00001"),
-                strdup("10000000000000000000C00001"),
+                strdup("1000000E000000000000C00001"),
                 strdup("10000000000010000000000001"),
                 strdup("10000000000010000000000001"),
                 strdup("10000000000010000000000001"),
                 strdup("11111011111111111110111111"),
                 strdup("10000000000010000000000001"),
-                strdup("10000000000010000000C00001"),
-                strdup("10000000000010000000000001"),
-                strdup("10000000000000000000C00001"),
+                strdup("10000000000010E00000C00001"),
                 strdup("100000E0000010000000000001"),
-                strdup("10000000000010000000000001"),
+                strdup("10000000000000000000C00001"),
+                strdup("100000000000100E0000000001"),
+                strdup("10000000000010000000E00001"),
                 strdup("11111111111111111111111111"),
                 NULL
         };
