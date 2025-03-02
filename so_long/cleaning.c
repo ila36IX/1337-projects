@@ -1,26 +1,5 @@
 #include "so_long.h"
 
-int mlx_destroy_window(void *mlx_ptr, void *win_ptr);
-int mlx_destroy_image(void *mlx_ptr, void *img_ptr);
-int mlx_destroy_display(void *mlx_ptr);
-
-/*typedef struct s_game {*/
-/*        void *mlx;*/
-/*        void *window;*/
-/*        char **map;*/
-/*        int win_h; */
-/*        int win_w; */
-/*        int map_h; */
-/*        int map_w; */
-/*        t_assets *assets;*/
-/*        int x_transform;*/
-/*        int y_transform;*/
-/*        int *keycode;*/
-/*        int speed;*/
-/*        int frames;*/
-/*        unsigned int steps;*/
-/*} t_game;*/
-
 void free_map(char **map) {
         int i;
 

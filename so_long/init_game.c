@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:28:11 by aljbari           #+#    #+#             */
-/*   Updated: 2025/03/01 11:37:33 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/03/02 18:18:17 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,16 +44,12 @@ t_game *init_game(char **map) {
         game->win_h = game->map_h * IMG_SIZE + 120;
         game->win_w = game->map_w * IMG_SIZE;
         game->window = mlx_new_window(game->mlx, game->win_w, game->win_h, "Banana");
-        /*t_pos pos;*/
-        /*for (int y = 0; y < game->map_h; y++) {*/
-        /*        for (int x = 0; x < game->map_w; x++)*/
-        /*                if (map[y][x] == 'P') {*/
-        /*                        pos.x = x;*/
-        /*                        pos.y = y;*/
-        /*                }*/
-        /*}*/
-        // game->pos = pos;
-        t_pos test = {0, 0};
+        game->collects_count = 0;
+        for (int y = 0; y < game->map_h; y++) {
+                for (int x = 0; x < game->map_w; x++)
+                        if (map[y][x] == 'C')
+                                game->collects_count++;
+        }
         return (game);
 }
 
@@ -88,9 +84,11 @@ t_walker *init_player(t_game *game)
         player->_off_y = 0;
         player->curr = STAND_1;
         player->pos = malloc(sizeof(t_pos));
-        for (int y = 0; y < game->map_h; y++) {
+        for (int y = 0; y < game->map_h; y++)
+        {
                 for (int x = 0; x < game->map_w; x++)
-                        if (game->map[y][x] == 'P') {
+                        if (game->map[y][x] == 'P')
+                        {
                                 player->pos->x = x;
                                 player->pos->y = y;
                         }
@@ -159,7 +157,7 @@ t_walker    **init_enemies(t_game *game)
         for (int y = 0; y < game->map_h; y++)
         {
                 for (int x = 0; x < game->map_w; x++)
-                        if (game->map[y][x] == 'E')
+                        if (game->map[y][x] == 'M')
                         {
                                 enemies[i] = init_enemy(game, x, y);
                                 game->map[y][x] = '0';
@@ -176,11 +174,11 @@ t_assets *init_assets(t_game *game)
 
         assets = malloc(sizeof(t_assets));
         assets->wall = init_img(game, "./images/wall.xpm");
-        /*assets->wall_left = init_img(game, "./images/wall_left.xpm");*/
         assets->peel = init_img(game, "./images/peel.xpm");
         assets->empty = init_img(game, "./images/empty.xpm");
-        /*assets->banana = init_img(game, "./images/banana_front.xpm");*/
         assets->background = init_img(game, "./images/background.xpm");
+        assets->exit_close = init_img(game, "./images/trash_closed.xpm");
+        assets->exit_open = init_img(game, "./images/trash_open.xpm");
         assets->numbers = malloc(sizeof(t_data) * 10);
         assets->numbers[0] = init_img(game, "./images/digit0.xpm");
         assets->numbers[1] = init_img(game, "./images/digit1.xpm");
