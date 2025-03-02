@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 11:12:00 by aljbari           #+#    #+#             */
-/*   Updated: 2025/02/28 19:18:04 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/03/02 18:16:05 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,8 @@ typedef struct s_assets {
         t_data *empty;
         t_data *peel;
         t_data **numbers;
-        t_data *exit;
+        t_data *exit_close;
+        t_data *exit_open;
 
         /* dynamic */
         t_walker *player;
@@ -113,6 +114,7 @@ typedef struct s_game {
         void *mlx;
         void *window;
         char **map;
+        char collects_count;
         int win_h; /* --- */
         int win_w; /* | */
         int map_h; /* --- */
@@ -141,3 +143,14 @@ void	move_top(t_walker *asset);
 void    rander_steps_counter(t_game *game, int steps);
 void clear_game(t_game *game);
 void    move_to_next_cell(t_game *game, t_walker *p);
+int can_move(t_game *game, t_walker *obj, int x, int y);
+int collision(t_walker *player, t_walker *enemy);
+void walk(t_game *game, t_walker *obj, int x, int y);
+int	press(int keycode, t_game *game);
+int	release(int keycode, t_game *game);
+void draw(t_game *game);
+void process_keys_events(t_game *game);
+void    set_next_frame_content(t_game *game);
+void render(t_game *game, unsigned int curr_frame);
+void move_enemies(t_game *game, unsigned int curr_frame);
+void quit(t_game *game);
