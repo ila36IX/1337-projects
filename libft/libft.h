@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 19:25:38 by aljbari           #+#    #+#             */
-/*   Updated: 2024/12/28 14:42:05 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/03/03 04:30:30 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <unistd.h>
 # include <stdint.h>
 # include "printf/ft_printf.h"
+# define BUFFER_SIZE 1024
 
 int					ft_isalpha(int c);
 int					ft_isdigit(int c);
@@ -55,6 +56,9 @@ void				ft_putchar_fd(char c, int fd);
 void				ft_putstr_fd(char *s, int fd);
 void				ft_putendl_fd(char *s, int fd);
 void				ft_putnbr_fd(int n, int fd);
+char	*get_next_line(int fd);
+char	*ft_substr_ptr(char const *start, char const *end);
+
 
 typedef struct s_list
 {
