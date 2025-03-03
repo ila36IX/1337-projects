@@ -13,7 +13,7 @@ mlx_linux/libmlx.a:
 	make -C mlx_linux
 
 %.o: %.c
-	$(CC)  -I/usr/include -Imlx_linux -O3 -c  -ggdb3 $< -o $@
+	$(CC)  -Wall -Wextra -Werror -I/usr/include -Imlx_linux -O3 -c  -ggdb3 $< -o $@
 
 run: $(NAME)
 	./$(NAME)

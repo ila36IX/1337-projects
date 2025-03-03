@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 11:12:00 by aljbari           #+#    #+#             */
-/*   Updated: 2025/03/02 18:16:05 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/03/03 02:40:45 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 
-#define BASE 10000 
+#define BASE 10000
 #define IMG_SIZE 64
 
 #define FRAME_RATE 4
@@ -27,6 +28,8 @@
 #define BASE_SPEED (BASE / SPEED)
 #define IMAGES (((BASE / SPEED) * IMG_SIZE) / FRAMES)
 
+
+#define HEADER_SIZE 120
 typedef struct s_data {
         void *img;
         char *addr;
@@ -35,21 +38,20 @@ typedef struct s_data {
         int endian;
 } t_data;
 
-typedef enum {
-        KEY_LEFT,    // 0
-        KEY_RIGHT,   // 1
-        KEY_UP,      // 2
-        KEY_DOWN,    // 3
-        KEY_SPACE,   // 4
-} KeyCode;
-
 enum {
-        DIRECTION_LEFT,    // 0
-        DIRECTION_RIGHT,   // 1
-        DIRECTION_UP,      // 2
-        DIRECTION_DOWN,    // 3
+        KEY_LEFT,  // 0
+        KEY_RIGHT, // 1
+        KEY_UP,    // 2
+        KEY_DOWN,  // 3
+        KEY_SPACE, // 4
 };
 
+enum {
+        DIRECTION_LEFT,  // 0
+        DIRECTION_RIGHT, // 1
+        DIRECTION_UP,    // 2
+        DIRECTION_DOWN,  // 3
+};
 
 enum {
         RIGHT_1,
@@ -83,8 +85,8 @@ typedef struct s_walker {
         int off_x;
         int off_y;
 
-        /* save the position before moving to erease it from screen
-         * this will fix the problem of redrawing the charchter at moving
+        /* save the position before moving to erease it from screen this will
+         * fix the problem of redrawing the charchter at moving
          */
         int _off_x;
         int _off_y;
@@ -109,7 +111,6 @@ typedef struct s_assets {
         t_walker **enemies;
 } t_assets;
 
-
 typedef struct s_game {
         void *mlx;
         void *window;
@@ -126,31 +127,36 @@ typedef struct s_game {
         unsigned int steps;
 } t_game;
 
+t_game *init_game(char **map);
+void *init_img(t_game *game, char *path);
+t_walker    **init_enemies(t_game *game);
+t_assets *init_assets(t_game *game);
+t_walker *init_player(t_game *game);
 
-t_game  *init_game(char **map);
-t_assets        *init_assets(t_game *game);
-void    update_pos(t_game *game, char *direction);
 
+void draw_img(t_game *game, t_data *asset, int pex_x, int pex_y);
+void walk_left(t_game *game, t_walker *asset);
+void draw_walker(t_game *game, t_walker *asset);
 
-void    draw_img(t_game *game, t_data *asset, int pex_x, int pex_y);
-void    walk_left(t_game *game, t_walker *asset);
-void    draw_walker(t_game *game, t_walker *asset);
-
-void	move_left(t_walker *asset);
-void	move_right(t_walker *asset);
-void	move_bottom(t_walker *asset);
-void	move_top(t_walker *asset);
-void    rander_steps_counter(t_game *game, int steps);
+void move_left(t_walker *asset);
+void move_right(t_walker *asset);
+void move_bottom(t_walker *asset);
+void move_top(t_walker *asset);
+void rander_steps_counter(t_game *game, int steps);
 void clear_game(t_game *game);
-void    move_to_next_cell(t_game *game, t_walker *p);
+void move_to_next_cell(t_walker *p);
 int can_move(t_game *game, t_walker *obj, int x, int y);
-int collision(t_walker *player, t_walker *enemy);
+int check_collision(t_game *game, t_walker *player, t_walker *enemy);
 void walk(t_game *game, t_walker *obj, int x, int y);
-int	press(int keycode, t_game *game);
-int	release(int keycode, t_game *game);
-void draw(t_game *game);
+int press(int keycode, t_game *game);
+int release(int keycode, t_game *game);
+void draw_static_objects(t_game *game);
 void process_keys_events(t_game *game);
-void    set_next_frame_content(t_game *game);
+void set_next_frame_content(t_game *game);
 void render(t_game *game, unsigned int curr_frame);
-void move_enemies(t_game *game, unsigned int curr_frame);
-void quit(t_game *game);
+void move_enemies(t_game *game);
+void quit(t_game *game, int key_code, char *message);
+void rander_steps_counter(t_game *game, int steps);
+
+
+
