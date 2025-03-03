@@ -13,12 +13,12 @@
 #ifndef LIBFT_H
 # define LIBFT_H
 
+# include "printf/ft_printf.h"
 # include <limits.h>
 # include <stddef.h>
+# include <stdint.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include <stdint.h>
-# include "printf/ft_printf.h"
 # define BUFFER_SIZE 1024
 
 int					ft_isalpha(int c);
@@ -56,9 +56,8 @@ void				ft_putchar_fd(char c, int fd);
 void				ft_putstr_fd(char *s, int fd);
 void				ft_putendl_fd(char *s, int fd);
 void				ft_putnbr_fd(int n, int fd);
-char	*get_next_line(int fd);
-char	*ft_substr_ptr(char const *start, char const *end);
-
+char				*get_next_line(int fd);
+char				*ft_substr_ptr(char const *start, char const *end);
 
 typedef struct s_list
 {
