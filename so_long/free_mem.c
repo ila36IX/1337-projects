@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cleaning.c                                         :+:      :+:    :+:   */
+/*   free_mem.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 02:55:37 by aljbari           #+#    #+#             */
-/*   Updated: 2025/03/03 03:23:32 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/03/03 03:51:20 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	clear_game(t_game *game)
 
 void	quit(t_game *game, int exit_code, char *message)
 {
-	printf("%s\n", message);
+	ft_printf("%s\n", message);
 	clear_game(game);
 	exit(exit_code);
 }

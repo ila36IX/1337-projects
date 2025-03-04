@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 02:30:48 by aljbari           #+#    #+#             */
-/*   Updated: 2025/03/03 02:50:09 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/03/03 03:36:34 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,6 @@ void	*init_img(t_game *game, char *path)
 	img = NULL;
 	img = mlx_xpm_file_to_image(game->mlx, path, &w, &h);
 	if (!img)
-		printf("Img init Error: \"%s\" exists?\n", path);
+		ft_printf("Img init Error: \"%s\" exists?\n", path);
 	return (img);
 }

@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 17:28:11 by aljbari           #+#    #+#             */
-/*   Updated: 2025/03/03 02:46:38 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/03/03 03:52:30 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ t_game	*init_game(char **map)
 	game = malloc(sizeof(t_game));
 	game->mlx = mlx_init();
 	game->map = map;
-	game->map_w = strlen(map[0]);
+	game->map_w = ft_strlen(map[0]);
 	game->map_h = 0;
 	while (map[game->map_h])
 		(game->map_h)++;
@@ -50,6 +50,7 @@ t_game	*init_game(char **map)
 	game->window = mlx_new_window(game->mlx, game->win_w, game->win_h,
 			"Banana");
 	game->collects_count = count_collectables(game);
+	ft_printf("%dx%d\n", game->map_h, game->map_w);
 	return (game);
 }
 

@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:49:20 by aljbari           #+#    #+#             */
-/*   Updated: 2025/03/03 03:23:48 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/03/04 00:59:04 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,34 +62,12 @@ void	start_game(char **map)
 	mlx_loop(game->mlx);
 }
 
-char	**parse_map(void)
-{
-	char	**map;
-
-	map = calloc(15, sizeof(char *));
-	map[0] = strdup("11111111111111111111111111");
-	map[1] = strdup("1P000000000000000000C00001");
-	map[2] = strdup("1000000E000000000000C00001");
-	map[3] = strdup("10000000000010000000000001");
-	map[4] = strdup("10000000000010000000000001");
-	map[5] = strdup("10000000000010000000000001");
-	map[6] = strdup("11111011111111111110111111");
-	map[7] = strdup("10000000000010000000000001");
-	map[8] = strdup("10000000000010000000C00001");
-	map[9] = strdup("10000000000010000000000001");
-	map[10] = strdup("100M0000000000000000C00001");
-	map[11] = strdup("10000000000010000000000001");
-	map[12] = strdup("10000000000010000000000001");
-	map[13] = strdup("11111111111111111111111111");
-	map[14] = NULL;
-	return (map);
-}
 
 int	main(void)
 {
 	char	**map;
 
-	map = parse_map();
+	map = read_map("map.txt");
 	start_game(map);
 	return (0);
 }
