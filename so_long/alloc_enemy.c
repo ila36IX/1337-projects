@@ -83,7 +83,7 @@ t_walker	**init_enemies(t_game *game)
 	int			x;
 	int			y;
 
-	enemies = malloc(sizeof(t_walker) * count_enemies(game) + 1);
+	enemies = ft_calloc(count_enemies(game) + 1, sizeof(t_walker));
 	y = 0;
 	i = 0;
 	while (y < game->map_h)
