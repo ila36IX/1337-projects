@@ -16,7 +16,7 @@ t_data	**init_player_views(t_game *game)
 {
 	t_data	**views;
 
-	views = malloc(sizeof(t_data) * VIEWS_END + 1);
+	views = ft_calloc(VIEWS_END + 1, sizeof(t_data));
 	views[LEFT_1] = init_img(game, "./images/banana_left1.xpm");
 	views[LEFT_2] = init_img(game, "./images/banana_left2.xpm");
 	views[LEFT_3] = init_img(game, "./images/banana_left3.xpm");

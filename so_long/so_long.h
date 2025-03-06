@@ -6,17 +6,16 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 11:12:00 by aljbari           #+#    #+#             */
-/*   Updated: 2025/03/03 02:40:45 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/03/04 00:58:54 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mlx.h"
 #include "mlx_linux/mlx.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#include "../libft/libft.h"
 #include <time.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdio.h>
 
 #define BASE 10000
 #define IMG_SIZE 64
@@ -159,4 +158,9 @@ void quit(t_game *game, int key_code, char *message);
 void rander_steps_counter(t_game *game, int steps);
 
 
+void	free_map(char **map);
 
+void map_checker(char **map);
+void sys_error_exit(char *prefix);
+void	map_error_exit(char **map, char *error);
+char	**read_map(char *path);

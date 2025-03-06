@@ -3,7 +3,7 @@ SRC= $(wildcard *.c)
 OBJ= $(SRC:%.c=%.o)
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g  -ggdb3
 
 # $(NAME): mlx_linux/libmlx.a $(OBJ) 
 # 	$(CC) $(OBJ) -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz -g  -ggdb3 -o $(NAME)

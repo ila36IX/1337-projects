@@ -39,6 +39,7 @@ char	**realloc_map(char **map, unsigned int size)
 	free(map);
 	return (new_map);
 }
+void    path_exits(char **map);
 
 char	**read_map(char *path)
 {
@@ -64,5 +65,7 @@ char	**read_map(char *path)
 	if (close(fd) == -1)
 		sys_error_exit(path);
 	map_checker(map);
+
+        path_exits(map);
 	return (map);
 }

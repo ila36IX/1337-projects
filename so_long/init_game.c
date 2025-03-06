@@ -50,7 +50,6 @@ t_game	*init_game(char **map)
 	game->window = mlx_new_window(game->mlx, game->win_w, game->win_h,
 			"Banana");
 	game->collects_count = count_collectables(game);
-	ft_printf("%dx%d\n", game->map_h, game->map_w);
 	return (game);
 }
 

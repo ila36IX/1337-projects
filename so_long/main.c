@@ -68,6 +68,7 @@ int	main(void)
 	char	**map;
 
 	map = read_map("map.txt");
+        return (0);
 	start_game(map);
 	return (0);
 }
