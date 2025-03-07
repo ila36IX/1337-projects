@@ -38,7 +38,7 @@ void	check_map_surrounded_by_walls(char **map)
 	}
 }
 
-void	check_map_rectangularity(char **map)
+void	check_map_rectangularly(char **map)
 {
 	size_t	i;
 	size_t	width;
@@ -50,9 +50,6 @@ void	check_map_rectangularity(char **map)
 		if (ft_strlen(map[i++]) != width)
 			map_error_exit(map, "All lines must have the same width");
 	}
-	if (i == width)
-		map_error_exit(map,
-			"Map must be rectangular (width doesn't equal height)");
 }
 
 void	count_charachters(char **map, unsigned int *counters, char c)
@@ -102,7 +99,8 @@ void	check_charachters(char **map)
 
 void	map_checker(char **map)
 {
-	check_charachters(map);
-	check_map_rectangularity(map);
-	check_map_surrounded_by_walls(map);
+        check_charachters(map);
+        check_map_rectangularly(map);
+        check_map_surrounded_by_walls(map);
+        check_map_solveability(map);
 }
