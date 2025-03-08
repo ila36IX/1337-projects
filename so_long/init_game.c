@@ -47,6 +47,8 @@ t_game	*init_game(char **map)
 		(game->map_h)++;
 	game->win_h = game->map_h * IMG_SIZE + HEADER_SIZE;
 	game->win_w = game->map_w * IMG_SIZE;
+	if (game->win_w <= 4 * 64)
+		game->win_w = 5 * 64;
 	game->window = mlx_new_window(game->mlx, game->win_w, game->win_h,
 			"Banana");
 	game->collects_count = count_collectables(game);

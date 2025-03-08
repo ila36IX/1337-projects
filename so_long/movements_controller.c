@@ -89,7 +89,7 @@ int	player_can_move(t_game *game, t_walker *obj, int x, int y)
 	if (game->map[next_y][next_x] == 'E' && game->collects_count == 0)
 		quit(game, 0, "You win!");
 	if (game->map[next_y][next_x] == 'E' && game->collects_count != 0)
-		return (0);
+		return (1);
 	if (game->map[next_y][next_x] == 'C')
 	{
 		game->map[next_y][next_x] = '0';

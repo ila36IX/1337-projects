@@ -78,8 +78,8 @@ int	count_enemies(t_game *game)
 
 t_walker	**init_enemies(t_game *game)
 {
-	int			i;
 	t_walker	**enemies;
+	int			i;
 	int			x;
 	int			y;
 
@@ -100,6 +100,5 @@ t_walker	**init_enemies(t_game *game)
 		}
 		y++;
 	}
-	enemies[i] = NULL;
 	return (enemies);
 }

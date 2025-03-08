@@ -99,8 +99,8 @@ void	check_charachters(char **map)
 
 void	map_checker(char **map)
 {
-        check_charachters(map);
-        check_map_rectangularly(map);
-        check_map_surrounded_by_walls(map);
-        check_map_solveability(map);
+	check_charachters(map);
+	check_map_rectangularly(map);
+	check_map_surrounded_by_walls(map);
+	check_map_solveability(map);
 }

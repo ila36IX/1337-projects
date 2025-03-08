@@ -12,6 +12,31 @@
 
 #include "so_long.h"
 
+void	render_exit_frame(t_game *game)
+{
+	int	x;
+	int	y;
+
+	x = 0;
+	y = 0;
+	while (game->map[y])
+	{
+		x = 0;
+		while (game->map[y][x])
+		{
+			if (game->map[y][x] == 'E')
+			{
+				if (game->collects_count > 0)
+					draw_img(game, game->assets->exit_close, x, y);
+				else
+					draw_img(game, game->assets->exit_open, x, y);
+			}
+			x++;
+		}
+		y++;
+	}
+}
+
 void	render(t_game *game, unsigned int curr_frame)
 {
 	t_walker	*player;
@@ -19,17 +44,18 @@ void	render(t_game *game, unsigned int curr_frame)
 
 	j = 0;
 	player = game->assets->player;
-	if (curr_frame % BASE_SPEED == 0)
+	if (curr_frame % (BASE / SPEED) == 0)
 	{
 		while (game->assets->enemies[j])
 			check_collision(game, game->assets->player,
 				game->assets->enemies[j++]);
+		render_exit_frame(game);
 		move_enemies(game);
 		move_to_next_cell(player);
 		draw_walker(game, player);
 		rander_steps_counter(game, game->steps);
 	}
-	if (curr_frame % IMAGES == 0)
+	if (curr_frame % (((BASE / SPEED) * IMG_SIZE) / FRAMES) == 0)
 		set_next_frame_content(game);
 }
 

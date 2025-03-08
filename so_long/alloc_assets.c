@@ -39,8 +39,8 @@ t_assets	*init_assets(t_game *game)
 	assets->peel = init_img(game, "./images/peel.xpm");
 	assets->empty = init_img(game, "./images/empty.xpm");
 	assets->background = init_img(game, "./images/background.xpm");
-	assets->exit_close = init_img(game, "./images/trash_closed.xpm");
-	assets->exit_open = init_img(game, "./images/trash_open.xpm");
+	assets->exit_open = init_img(game, "./images/exit_open.xpm");
+	assets->exit_close = init_img(game, "./images/exit_close.xpm");
 	assets->header_counter = init_img(game,
 			"./images/banner_with_steps_counter.xpm");
 	assets->header = init_img(game, "./images/banner.xpm");

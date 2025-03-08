@@ -29,7 +29,7 @@ char	**realloc_map(char **map, unsigned int size)
 	unsigned int	i;
 	char			**new_map;
 
-	new_map = ft_calloc(size + 256, sizeof(char *));
+	new_map = ft_calloc(size + 128, sizeof(char *));
 	i = 0;
 	while (i < size)
 	{
@@ -39,7 +39,6 @@ char	**realloc_map(char **map, unsigned int size)
 	free(map);
 	return (new_map);
 }
-void    path_exits(char **map);
 
 char	**read_map(char *path)
 {
@@ -51,7 +50,7 @@ char	**read_map(char *path)
 	fd = open(path, O_RDONLY);
 	if (fd == -1)
 		sys_error_exit(path);
-	map = ft_calloc(256, sizeof(char *));
+	map = ft_calloc(128, sizeof(char *));
 	i = 0;
 	line = get_next_line(fd);
 	while (line)
@@ -59,13 +58,11 @@ char	**read_map(char *path)
 		del_nl(line);
 		map[i++] = line;
 		line = get_next_line(fd);
-		if (i % 254 == 0 && line)
+		if (i % 128 == 0 && line)
 			map = realloc_map(map, i);
 	}
 	if (close(fd) == -1)
 		sys_error_exit(path);
 	map_checker(map);
-
-        path_exits(map);
 	return (map);
 }
