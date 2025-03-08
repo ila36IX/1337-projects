@@ -62,13 +62,34 @@ void	start_game(char **map)
 	mlx_loop(game->mlx);
 }
 
-int	main(void)
+void	map_limit_exit(char **map)
+{
+	int	width;
+	int	height;
+
+	width = ft_strlen(map[0]);
+	height = 0;
+	while (map[height])
+		height++;
+	if (width * IMG_SIZE > MAX_WINDOW_WIDTH || height
+		* IMG_SIZE > MAX_WINDOW_HEIGHT - IMG_SIZE * 2)
+	{
+		ft_printf("Map is solvable, but...\n");
+		map_error_exit(map, "Window size is bigger than the limit");
+	}
+}
+
+int	main(int ac, char *av[])
 {
 	char	**map;
 
-	map = read_map("map.txt");
-	printf("Map is valid");
-	/*return (0);*/
+	if (ac != 2)
+	{
+		ft_printf("Usage: %s path/to/map.ber\n", av[0]);
+		return (0);
+	}
+	map = read_map(av[1]);
+	map_limit_exit(map);
 	start_game(map);
 	return (0);
 }

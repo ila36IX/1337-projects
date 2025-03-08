@@ -19,12 +19,12 @@
 
 #define BASE 10000
 #define IMG_SIZE 64
-
 #define FRAME_RATE 4
 #define SPEED 1200
 #define FRAMES 13
-
 #define HEADER_SIZE 120
+#define MAX_WINDOW_WIDTH 3840
+#define MAX_WINDOW_HEIGHT 2160
 
 typedef struct s_data
 {

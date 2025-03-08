@@ -38,11 +38,10 @@ t_game	*init_game(char **map)
 {
 	t_game	*game;
 
-	game = malloc(sizeof(t_game));
+	game = ft_calloc(1, sizeof(t_game));
 	game->mlx = mlx_init();
 	game->map = map;
 	game->map_w = ft_strlen(map[0]);
-	game->map_h = 0;
 	while (map[game->map_h])
 		(game->map_h)++;
 	game->win_h = game->map_h * IMG_SIZE + HEADER_SIZE;
@@ -50,7 +49,7 @@ t_game	*init_game(char **map)
 	if (game->win_w <= 4 * 64)
 		game->win_w = 5 * 64;
 	game->window = mlx_new_window(game->mlx, game->win_w, game->win_h,
-			"Banana");
+			"so_long");
 	game->collects_count = count_collectables(game);
 	return (game);
 }

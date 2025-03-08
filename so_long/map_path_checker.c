@@ -12,27 +12,27 @@
 
 #include "so_long.h"
 
-static void	print_ids(int **combs, int width, int height)
-{
-	int	x;
-	int	y;
-
-	y = 0;
-	while (y < height)
-	{
-		x = 0;
-		while (x < width)
-		{
-			if (combs[y][x] > 0)
-				ft_printf("\e[%dm%2d\e[0m ", combs[y][x] + 26, combs[y][x]);
-			else
-				ft_printf("%2d ", combs[y][x]);
-			x++;
-		}
-		ft_printf("\n");
-		y++;
-	}
-}
+/*static void	print_ids(int **combs, int width, int height)*/
+/*{*/
+/*	int	x;*/
+/*	int	y;*/
+/**/
+/*	y = 0;*/
+/*	while (y < height)*/
+/*	{*/
+/*		x = 0;*/
+/*		while (x < width)*/
+/*		{*/
+/*			if (combs[y][x] > 0)*/
+/*				ft_printf("\e[%dm%2d\e[0m ", combs[y][x] + 26, combs[y][x]);*/
+/*			else*/
+/*				ft_printf("%2d ", combs[y][x]);*/
+/*			x++;*/
+/*		}*/
+/*		ft_printf("\n");*/
+/*		y++;*/
+/*	}*/
+/*}*/
 
 /**
  * replace_id - Merge (union) two groups after finding common points
@@ -91,10 +91,7 @@ void	quick_find_hlper(int **ids, int x, int y, int *id)
  */
 void	quick_find(char **map, int **ids, int width, int height)
 {
-	int	x;
-	int	y;
-	int	id;
-
+	int (x), (y), (id);
 	id = 1;
 	y = 0;
 	while (y < height)
@@ -116,7 +113,6 @@ void	quick_find(char **map, int **ids, int width, int height)
 		}
 		y++;
 	}
-        print_ids(ids, width, height);
 	exit_if_not_solvable(map, ids, width, height);
 }
 

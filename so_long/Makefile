@@ -8,7 +8,10 @@ CFLAGS = -Wall -Wextra -Werror -g  -ggdb3
 # $(NAME): mlx_linux/libmlx.a $(OBJ) 
 # 	$(CC) $(OBJ) -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz -g  -ggdb3 -o $(NAME)
 #
-$(NAME): libft_rule $(OBJ) 
+all: libft_rule $(NAME)
+
+
+$(NAME): $(OBJ) 
 	$(CC) $(OBJ) -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz -g  -ggdb3 -L$(LIBFT_DIR) -lft -o $(NAME)
 
 libft_rule:
@@ -20,9 +23,6 @@ mlx_linux/libmlx.a:
 	mv minilibx-linux mlx_linux
 	rm mlx_linux.tgz
 	make -C mlx_linux
-
-# %.o: %.c
-# 	$(CC)  -Wall -Wextra -Werror -I/usr/include -Imlx_linux -O3 -c  $< -o $@
 
 run: $(NAME)
 	./$(NAME)

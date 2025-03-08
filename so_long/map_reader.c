@@ -40,6 +40,24 @@ char	**realloc_map(char **map, unsigned int size)
 	return (new_map);
 }
 
+void	exit_if_extension_unknown(char *path)
+{
+	size_t	size;
+
+	size = ft_strlen(path);
+	if (size == 4 && ft_strncmp(path, ".ber", 4) == 0)
+	{
+		ft_putendl_fd("Error", 2);
+		ft_putendl_fd("Empty file name", 2);
+		exit(EXIT_FAILURE);
+	}
+	if (size > 4 && ft_strncmp(path + size - 4, ".ber", 4) == 0)
+		return ;
+	ft_putendl_fd("Error", 2);
+	ft_putendl_fd("Invalid extension", 2);
+	exit(EXIT_FAILURE);
+}
+
 char	**read_map(char *path)
 {
 	char			**map;
@@ -47,6 +65,7 @@ char	**read_map(char *path)
 	unsigned int	i;
 	int				fd;
 
+	exit_if_extension_unknown(path);
 	fd = open(path, O_RDONLY);
 	if (fd == -1)
 		sys_error_exit(path);
