@@ -6,33 +6,11 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 01:46:02 by aljbari           #+#    #+#             */
-/*   Updated: 2025/03/07 20:50:08 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/03/09 21:00:50 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
-
-/*static void	print_ids(int **combs, int width, int height)*/
-/*{*/
-/*	int	x;*/
-/*	int	y;*/
-/**/
-/*	y = 0;*/
-/*	while (y < height)*/
-/*	{*/
-/*		x = 0;*/
-/*		while (x < width)*/
-/*		{*/
-/*			if (combs[y][x] > 0)*/
-/*				ft_printf("\e[%dm%2d\e[0m ", combs[y][x] + 26, combs[y][x]);*/
-/*			else*/
-/*				ft_printf("%2d ", combs[y][x]);*/
-/*			x++;*/
-/*		}*/
-/*		ft_printf("\n");*/
-/*		y++;*/
-/*	}*/
-/*}*/
 
 /**
  * replace_id - Merge (union) two groups after finding common points
@@ -99,7 +77,7 @@ void	quick_find(char **map, int **ids, int width, int height)
 		x = 0;
 		while (x < width)
 		{
-			if (map[y][x] == '1')
+			if (map[y][x] == '1' || map[y][x] == 'M')
 				ids[y][x] = -1;
 			else if (y > 1 && ids[y - 1][x] > 0 && x > 1 && ids[y][x - 1] > 0
 				&& ids[y - 1][x] != ids[y][x - 1])
@@ -141,3 +119,25 @@ void	check_map_solveability(char **map)
 	quick_find(map, ids, x, y);
 	free_ids(ids, y);
 }
+
+/*static void	print_ids(int **combs, int width, int height)*/
+/*{*/
+/*	int	x;*/
+/*	int	y;*/
+/**/
+/*	y = 0;*/
+/*	while (y < height)*/
+/*	{*/
+/*		x = 0;*/
+/*		while (x < width)*/
+/*		{*/
+/*			if (combs[y][x] > 0)*/
+/*				ft_printf("\e[%dm%2d\e[0m ", combs[y][x] + 26, combs[y][x]);*/
+/*			else*/
+/*				ft_printf("%2d ", combs[y][x]);*/
+/*			x++;*/
+/*		}*/
+/*		ft_printf("\n");*/
+/*		y++;*/
+/*	}*/
+/*}*/
