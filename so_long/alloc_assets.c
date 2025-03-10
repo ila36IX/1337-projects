@@ -12,22 +12,39 @@
 
 #include "so_long.h"
 
-t_data	**init_numbers_assets(t_game *game)
+t_pos	*player_position(t_game *game)
 {
-	t_data	**numbers;
+	t_pos	*pos;
+	int		x;
+	int		y;
 
-	numbers = malloc(sizeof(t_data) * 10);
-	numbers[0] = init_img(game, "./textures/digit0.xpm");
-	numbers[1] = init_img(game, "./textures/digit1.xpm");
-	numbers[2] = init_img(game, "./textures/digit2.xpm");
-	numbers[3] = init_img(game, "./textures/digit3.xpm");
-	numbers[4] = init_img(game, "./textures/digit4.xpm");
-	numbers[5] = init_img(game, "./textures/digit5.xpm");
-	numbers[6] = init_img(game, "./textures/digit6.xpm");
-	numbers[8] = init_img(game, "./textures/digit8.xpm");
-	numbers[7] = init_img(game, "./textures/digit7.xpm");
-	numbers[9] = init_img(game, "./textures/digit9.xpm");
-	return (numbers);
+	pos = malloc(sizeof(t_pos));
+	y = 0;
+	while (y < game->map_h)
+	{
+		x = 0;
+		while (x < game->map_w)
+		{
+			if (game->map[y][x] == 'P')
+			{
+				pos->x = x;
+				pos->y = y;
+			}
+			x++;
+		}
+		y++;
+	}
+	return (pos);
+}
+
+t_walker	*init_player(t_game *game)
+{
+	t_walker	*player;
+
+	player = malloc(sizeof(t_walker));
+	player->view = init_img(game, "./textures/stand2.xpm");
+	player->pos = player_position(game);
+	return (player);
 }
 
 t_assets	*init_assets(t_game *game)
@@ -42,13 +59,6 @@ t_assets	*init_assets(t_game *game)
 	assets->exit_open = init_img(game, "./textures/exit_open.xpm");
 	assets->exit_close = init_img(game, "./textures/exit_close.xpm");
 	assets->player = init_player(game);
-	game->keycode = malloc(sizeof(int) * 4);
-	game->keycode[0] = 0;
-	game->keycode[1] = 0;
-	game->keycode[2] = 0;
-	game->keycode[3] = 0;
-	game->speed = 0;
-	game->frames = 0;
 	game->steps = 0;
 	return (assets);
 }

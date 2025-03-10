@@ -72,7 +72,6 @@ void draw(t_game *game)
                 }
                 y++;
         }
-        printf("(%d, %d))\n", game->exit_pos.x, game->exit_pos.y);
         if (game->map[game->exit_pos.y][game->exit_pos.x] != 'P')
                 game->map[game->exit_pos.y][game->exit_pos.x] = 'E';
         draw_img(game, assets->exit_close, game->exit_pos.x, game->exit_pos.y);
@@ -101,6 +100,8 @@ int     press_handler(int key_code, t_game *game)
                 update_pos(game, "up");
         if (key_code == 115)
                 update_pos(game, "down");
+        if (key_code == 65307)
+                quit(game, 0, "Exiting...");
         mlx_clear_window(game->mlx, game->window);
         draw(game);
         return (0);
@@ -119,7 +120,7 @@ void	start_game(char **map)
 
 	game = init_game((char **)map);
 	game->assets = init_assets(game);
-	/*draw_static_objects(game);*/
+        draw(game);
 	mlx_key_hook(game->window, press_handler, game);
 	mlx_hook(game->window, 17, 0, destroy, game);
 	mlx_loop(game->mlx);
