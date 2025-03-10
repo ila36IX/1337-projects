@@ -1,3 +1,4 @@
+CC=@cc
 NAME=so_long
 SRC= $(wildcard *.c)
 OBJ= $(SRC:%.c=%.o)
@@ -5,14 +6,17 @@ LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 CFLAGS = -Wall -Wextra -Werror -g  -ggdb3
 
-# $(NAME): mlx_linux/libmlx.a $(OBJ) 
-# 	$(CC) $(OBJ) -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz -g  -ggdb3 -o $(NAME)
-#
 all: libft_rule $(NAME)
 
+# Run "make get_lib" to download the library source code if you didn't have the
+# library in your machine
+get_lib: libft_rule mlx_linux/libmlx.a game_exec
 
-$(NAME): $(OBJ) 
-	$(CC) $(OBJ) -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz -g  -ggdb3 -L$(LIBFT_DIR) -lft -o $(NAME)
+$(NAME): $(OBJ)
+	$(CC) $(OBJ)  -lmlx -lXext -lX11 -L$(LIBFT_DIR) -lft -o $(NAME)
+
+game_exec: mlx_linux/libmlx.a $(OBJ) 
+	$(CC) $(OBJ) -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz -o $(NAME)
 
 libft_rule:
 	@$(MAKE) -C $(LIBFT_DIR)
@@ -29,10 +33,12 @@ run: $(NAME)
 
 clean: 
 	rm -f $(OBJ)
+	$(MAKE) -C $(LIBFT_DIR) clean
 
 fclean: 
 	rm -f $(OBJ) $(NAME)
+	$(MAKE) -C $(LIBFT_DIR) fclean
 
-re: fclean run
+re: fclean all
 
-.PHONY: re clean fclean run
+.PHONY: re clean fclean run libft_rule get_lib
