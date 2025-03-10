@@ -44,20 +44,10 @@ t_game	*init_game(char **map)
 	game->map_w = ft_strlen(map[0]);
 	while (map[game->map_h])
 		(game->map_h)++;
-	game->win_h = game->map_h * IMG_SIZE + HEADER_SIZE;
+	game->win_h = game->map_h * IMG_SIZE;
 	game->win_w = game->map_w * IMG_SIZE;
-	if (game->win_w <= 4 * 64)
-		game->win_w = 5 * 64;
 	game->window = mlx_new_window(game->mlx, game->win_w, game->win_h,
 			"so_long");
 	game->collects_count = count_collectables(game);
 	return (game);
-}
-
-void	put_pixel(t_data *data, int x, int y, int color)
-{
-	char	*dst;
-
-	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
-	*(unsigned int *)dst = color;
 }

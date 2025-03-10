@@ -33,11 +33,11 @@ run: $(NAME)
 
 clean: 
 	rm -f $(OBJ)
-	$(MAKE) -C $(LIBFT_DIR) clean
+	# $(MAKE) -C $(LIBFT_DIR) clean
 
 fclean: 
 	rm -f $(OBJ) $(NAME)
-	$(MAKE) -C $(LIBFT_DIR) fclean
+	# $(MAKE) -C $(LIBFT_DIR) fclean
 
 re: fclean all
 
