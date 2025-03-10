@@ -1,10 +1,10 @@
 CC=@cc
 NAME=so_long
-SRC= $(wildcard *.c)
+SRC= alloc_assets.c free_mem.c main.c map_reader.c parse.c render.c error_handlers.c init_game.c map_path_checker.c movements_controller.c parse_utils.c utils.c
 OBJ= $(SRC:%.c=%.o)
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
-CFLAGS = -Wall -Wextra -Werror -g -ggdb3
+CFLAGS = -Wall -Wextra -Werror
 
 all: libft_rule $(NAME)
 
@@ -16,7 +16,7 @@ $(NAME): $(OBJ)
 	$(CC) $(OBJ)  -lmlx -lXext -lX11 -L$(LIBFT_DIR) -lft -o $(NAME)
 
 game_exec: mlx_linux/libmlx.a $(OBJ) 
-	$(CC) $(OBJ) -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz -g -ggdb3 -o $(NAME)
+	$(CC) $(OBJ) -Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz -o $(NAME)
 
 libft_rule:
 	@$(MAKE) -C $(LIBFT_DIR)
@@ -33,11 +33,11 @@ run: $(NAME)
 
 clean: 
 	rm -f $(OBJ)
-	# $(MAKE) -C $(LIBFT_DIR) clean
+	$(MAKE) -C $(LIBFT_DIR) clean
 
 fclean: 
 	rm -f $(OBJ) $(NAME)
-	# $(MAKE) -C $(LIBFT_DIR) fclean
+	$(MAKE) -C $(LIBFT_DIR) fclean
 
 re: fclean all
 
