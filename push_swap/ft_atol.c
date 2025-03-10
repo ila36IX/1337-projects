@@ -6,7 +6,7 @@
 /*   By: aljbari <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 16:08:10 by aljbari           #+#    #+#             */
-/*   Updated: 2025/01/28 16:41:42 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/02/08 10:05:14 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ long	ft_atol(const char *str)
 		c = *str++;
 		nbr *= 10;
 		nbr += (c - '0');
+		if ((sign > 0 && nbr > INT_MAX) || (sign < 0 && (long) nbr * -1 < INT_MIN))
+			return (nbr * sign);
 	}
 	return (nbr * sign);
 }
