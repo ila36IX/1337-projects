@@ -6,25 +6,27 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 11:12:00 by aljbari           #+#    #+#             */
-/*   Updated: 2025/03/07 20:53:25 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/03/09 21:03:07 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft/libft.h"
-#include "mlx_linux/mlx.h"
-#include <fcntl.h>
-#include <stdio.h>
-#include <time.h>
-#include <unistd.h>
+#ifndef SO_LONG_H
+# define SO_LONG_H
+# include "../libft/libft.h"
+# include "mlx_linux/mlx.h"
+# include <fcntl.h>
+# include <stdio.h>
+# include <time.h>
+# include <unistd.h>
 
-#define BASE 10000
-#define IMG_SIZE 64
-#define FRAME_RATE 4
-#define SPEED 1200
-#define FRAMES 13
-#define HEADER_SIZE 120
-#define MAX_WINDOW_WIDTH 3840
-#define MAX_WINDOW_HEIGHT 2160
+# define BASE 10000
+# define IMG_SIZE 64
+# define FRAME_RATE 4
+# define SPEED 1200
+# define FRAMES 13
+# define HEADER_SIZE 120
+# define MAX_WINDOW_WIDTH 3840
+# define MAX_WINDOW_HEIGHT 2160
 
 typedef struct s_data
 {
@@ -169,3 +171,4 @@ void				check_map_solveability(char **map);
 void				free_ids(int **ids, int height);
 void				exit_if_not_solvable(char **map, int **ids, int width,
 						int height);
+#endif
