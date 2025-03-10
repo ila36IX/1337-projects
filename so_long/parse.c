@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 20:15:32 by aljbari           #+#    #+#             */
-/*   Updated: 2025/03/04 00:56:22 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/03/10 21:44:26 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,6 @@ void	count_charachters(char **map, unsigned int *counters, char c)
 		counters[3]++;
 	else if (c == 'P')
 		counters[4]++;
-	else if (c == 'M')
-		counters[5]++;
 	else
 		map_error_exit(map, "Unknown characher in the giving map");
 	if (counters[3] > 1)
