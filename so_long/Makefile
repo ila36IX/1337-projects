@@ -4,7 +4,7 @@ SRC= $(wildcard *.c)
 OBJ= $(SRC:%.c=%.o)
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
-CFLAGS = -Wall -Wextra -Werror -g  -ggdb3
+CFLAGS = -Wall -Wextra -Werror
 
 all: libft_rule $(NAME)
 
