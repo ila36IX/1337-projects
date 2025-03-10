@@ -12,18 +12,6 @@
 
 #include "so_long.h"
 
-/*int	update(t_game *game)*/
-/*{*/
-/*	static unsigned int	curr_frame;*/
-/**/
-/*	curr_frame++;*/
-/*	process_keys_events(game);*/
-/*	render(game, curr_frame);*/
-/*	usleep(2000);*/
-/*	return (0);*/
-/*}*/
-#include <string.h>
-
 void draw_img(t_game *game, t_data *asset, int pex_x, int pex_y)
 {
         int x;
@@ -52,8 +40,7 @@ void move_dir(t_game *game, int x_offset, int y_offset)
         game->steps++;
         ft_printf("number of movements: %d\n", game->steps);
         game->map[c->y][c->x] = '0';
-        if (game->map[c->y + y_offset][c->x + x_offset] != 'E')
-                game->map[c->y + y_offset][c->x + x_offset] = 'P';
+        game->map[c->y + y_offset][c->x + x_offset] = 'P';
         (game->assets->player->pos->x) += x_offset;
         (game->assets->player->pos->y) += y_offset;
 }
@@ -79,13 +66,17 @@ void draw(t_game *game)
                                 draw_img(game, assets->empty, x, y);
                         else if (game->map[y][x] == 'E')
                                 draw_img(game, assets->exit_close, x, y);
-                        /*else if (game->map[y][x] == 'P')*/
-                        /*        draw_img(game, assets->player->views[0], x, y);*/
+                        else if (game->map[y][x] == 'P')
+                                draw_img(game, assets->player->view, x, y);
                         x++;
                 }
                 y++;
         }
-        draw_img(game, assets->player->views[0], assets->player->pos->x, assets->player->pos->y);
+        printf("(%d, %d))\n", game->exit_pos.x, game->exit_pos.y);
+        if (game->map[game->exit_pos.y][game->exit_pos.x] != 'P')
+                game->map[game->exit_pos.y][game->exit_pos.x] = 'E';
+        draw_img(game, assets->exit_close, game->exit_pos.x, game->exit_pos.y);
+        draw_img(game, assets->player->view, assets->player->pos->x, assets->player->pos->y);
 }
 
 void update_pos(t_game *game, char *direction)

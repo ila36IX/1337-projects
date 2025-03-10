@@ -87,13 +87,7 @@ typedef struct s_pos
  */
 typedef struct s_walker
 {
-	t_data			**views;
-	int				curr;
-	int				off_x;
-	int				off_y;
-
-	int				_off_x;
-	int				_off_y;
+	t_data			*view;
 	int				direction;
 	t_pos			*pos;
 }					t_walker;
@@ -101,16 +95,12 @@ typedef struct s_walker
 typedef struct s_assets
 {
 	t_data			*background;
-	t_data			*header;
-	t_data			*header_counter;
 	t_data			*wall;
 	t_data			*empty;
 	t_data			*peel;
-	t_data			**numbers;
 	t_data			*exit_close;
 	t_data			*exit_open;
 	t_walker		*player;
-	t_walker		**enemies;
 }					t_assets;
 
 typedef struct s_game
@@ -128,6 +118,7 @@ typedef struct s_game
 	int				speed;
 	int				frames;
 	unsigned int	steps;
+	t_pos	exit_pos;
 }					t_game;
 
 t_game				*init_game(char **map);

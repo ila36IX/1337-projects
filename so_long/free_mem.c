@@ -22,39 +22,22 @@ void	free_map(char **map)
 	free(map);
 }
 
-void	free_dynamic_charachter(t_game *game, t_walker *c)
+void	free_dynamic_charachter(t_walker *c)
 {
-	int	i;
-
-	i = 0;
-	while (i < VIEWS_END)
-		mlx_destroy_image(game->mlx, c->views[i++]);
 	free(c->pos);
-	free(c->views);
+	free(c->view);
 	free(c);
 }
 
 void	free_game_assets(t_game *game)
 {
-	int	i;
-
 	mlx_destroy_image(game->mlx, game->assets->background);
 	mlx_destroy_image(game->mlx, game->assets->wall);
 	mlx_destroy_image(game->mlx, game->assets->empty);
 	mlx_destroy_image(game->mlx, game->assets->peel);
-	mlx_destroy_image(game->mlx, game->assets->header);
-	mlx_destroy_image(game->mlx, game->assets->header_counter);
 	mlx_destroy_image(game->mlx, game->assets->exit_close);
 	mlx_destroy_image(game->mlx, game->assets->exit_open);
-	i = 0;
-	while (i <= 9)
-		mlx_destroy_image(game->mlx, game->assets->numbers[i++]);
-	free(game->assets->numbers);
-	free_dynamic_charachter(game, game->assets->player);
-	i = 0;
-	while (game->assets->enemies[i])
-		free_dynamic_charachter(game, game->assets->enemies[i++]);
-	free(game->assets->enemies);
+	free_dynamic_charachter(game->assets->player);
 	free(game->assets);
 }
 

@@ -41,12 +41,7 @@ t_assets	*init_assets(t_game *game)
 	assets->background = init_img(game, "./textures/background.xpm");
 	assets->exit_open = init_img(game, "./textures/exit_open.xpm");
 	assets->exit_close = init_img(game, "./textures/exit_close.xpm");
-	assets->header_counter = init_img(game,
-			"./textures/banner_with_steps_counter.xpm");
-	assets->header = init_img(game, "./textures/banner.xpm");
 	assets->player = init_player(game);
-	assets->enemies = init_enemies(game);
-	assets->numbers = init_numbers_assets(game);
 	game->keycode = malloc(sizeof(int) * 4);
 	game->keycode[0] = 0;
 	game->keycode[1] = 0;

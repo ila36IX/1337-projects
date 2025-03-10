@@ -34,6 +34,30 @@ int	count_collectables(t_game *game)
 	return (i);
 }
 
+void    set_exit_pos(t_game *game)
+{
+        int x;
+        int y;
+        t_pos e_p;
+
+        y = 0;
+        while (game->map[y])
+        {
+                x = 0;
+                while (game->map[y][x])
+                {
+                        if (game->map[y][x] == 'E')
+                        {
+                                e_p.x = x;
+                                e_p.y = y;
+                        }
+                        x++;
+                }
+                y++;
+        }
+        game->exit_pos = e_p;
+}
+
 t_game	*init_game(char **map)
 {
 	t_game	*game;
@@ -49,5 +73,6 @@ t_game	*init_game(char **map)
 	game->window = mlx_new_window(game->mlx, game->win_w, game->win_h,
 			"so_long");
 	game->collects_count = count_collectables(game);
+        set_exit_pos(game);
 	return (game);
 }
