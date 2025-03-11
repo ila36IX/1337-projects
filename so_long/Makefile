@@ -6,13 +6,17 @@ OBJ= $(SRC:%.c=%.o)
 BONUS_OBJ= $(BONUS_SRC:%.c=%.o)
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
-CFLAGS = -Wall -Wextra -Werror -g  -ggdb3
+CFLAGS = -Wall -Wextra -Werror
 MLXFLAGS = -lmlx -lXext -lX11
+BONUS = .bst
 
 all: libft_rule $(NAME)
 
-bonus: libft_rule $(BONUS_OBJ)
-	$(CC) $(SRC) $(MLXFLAGS) -L$(LIBFT_DIR) -lft -o $(NAME)
+bonus: libft_rule $(BONUS)
+
+$(BONUS): $(BONUS_OBJ)
+	@touch $(BONUS)
+	$(CC) $(BONUS_OBJ)  $(MLXFLAGS) -L$(LIBFT_DIR) -lft -o $(NAME)
 
 # Run "make get_lib" to download the library source code if you didn't have the
 # library in your machine
