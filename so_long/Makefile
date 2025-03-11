@@ -1,6 +1,6 @@
 CC=cc
 NAME=so_long
-SRC= $(wildcard *.c)
+SRC= alloc_assets.c error_handlers.c free_mem.c init_game.c main.c map_path_checker.c map_reader.c movements_controller.c parse.c parse_utils.c render.c utils.c
 BONUS_SRC= bonus/alloc_assets_bonus.c bonus/alloc_enemy_bonus.c bonus/alloc_player_bonus.c bonus/character_movements_0_bonus.c bonus/character_movements_1_bonus.c bonus/error_handlers_bonus.c bonus/frames_controller_bonus.c bonus/free_mem_bonus.c bonus/init_game_bonus.c bonus/key_hooks_bonus.c bonus/main_bonus.c bonus/map_path_checker_bonus.c bonus/map_reader_bonus.c bonus/movements_controller_bonus.c bonus/parse_bonus.c bonus/parse_utils_bonus.c bonus/renders_0_bonus.c bonus/renders_1_bonus.c bonus/utils_bonus.c
 OBJ= $(SRC:%.c=%.o)
 BONUS_OBJ= $(BONUS_SRC:%.c=%.o)
