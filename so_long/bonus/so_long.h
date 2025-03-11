@@ -13,11 +13,11 @@
 #ifndef SO_LONG_H
 # define SO_LONG_H
 # include "../libft/libft.h"
-# include "mlx_linux/mlx.h"
 # include <fcntl.h>
 # include <stdio.h>
 # include <time.h>
 # include <unistd.h>
+# include <mlx.h>
 
 # define BASE 10000
 # define IMG_SIZE 64
