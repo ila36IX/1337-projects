@@ -8,7 +8,7 @@ LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 CFLAGS = -Wall -Wextra -Werror
 MLXFLAGS = -lmlx -lXext -lX11
-BONUS = .bst
+BONUS = .bns
 
 all: libft_rule $(NAME)
 
