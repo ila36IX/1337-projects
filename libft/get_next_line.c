@@ -77,7 +77,11 @@ char	*get_next_line(int fd)
 	char		*temp_buffer;
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > INT_MAX)
+        {
+                if (buffer)
+                        free(buffer);
 		return (NULL);
+        }
 	if (!buffer)
 		buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	while (buffer)
