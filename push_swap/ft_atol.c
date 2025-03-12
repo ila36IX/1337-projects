@@ -27,6 +27,13 @@ static int	ft_isspace(char c)
 	return (found);
 }
 
+static long	nbr_overflow(int sign, unsigned long nbr)
+{
+	if ((sign > 0 && nbr > INT_MAX) || (sign < 0 && (long)(nbr * -1) < INT_MIN))
+		return (1);
+	return (0);
+}
+
 /**
  * ft_atol - convert string into long
  *
@@ -54,7 +61,7 @@ long	ft_atol(const char *str)
 		c = *str++;
 		nbr *= 10;
 		nbr += (c - '0');
-		if ((sign > 0 && nbr > INT_MAX) || (sign < 0 && (long) nbr * -1 < INT_MIN))
+		if (nbr_overflow(sign, nbr))
 			return (nbr * sign);
 	}
 	return (nbr * sign);

@@ -29,6 +29,22 @@ void	push_a(t_stack *stack_a, t_stack *stack_b)
 	ft_printf("pa\n");
 }
 
+void	_push_a(t_stack *stack_a, t_stack *stack_b)
+{
+	t_list	*tmp;
+
+	if (!stack_b->head)
+		return ;
+	tmp = stack_b->head;
+	stack_b->head = stack_b->head->next;
+	(stack_b->size)--;
+	tmp->next = stack_a->head;
+	stack_a->head = tmp;
+	if (!stack_a->tail)
+		stack_a->tail = stack_a->head;
+	(stack_a->size)++;
+}
+
 void	push_b(t_stack *stack_a, t_stack *stack_b)
 {
 	t_list	*tmp;
@@ -44,4 +60,20 @@ void	push_b(t_stack *stack_a, t_stack *stack_b)
 		stack_b->tail = stack_b->head;
 	(stack_b->size)++;
 	ft_printf("pb\n");
+}
+
+void	_push_b(t_stack *stack_a, t_stack *stack_b)
+{
+	t_list	*tmp;
+
+	if (!stack_a->head)
+		return ;
+	tmp = stack_a->head;
+	stack_a->head = stack_a->head->next;
+	(stack_a->size)--;
+	tmp->next = stack_b->head;
+	stack_b->head = tmp;
+	if (!stack_b->tail)
+		stack_b->tail = stack_b->head;
+	(stack_b->size)++;
 }

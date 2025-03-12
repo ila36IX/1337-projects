@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 17:23:16 by aljbari           #+#    #+#             */
-/*   Updated: 2025/01/28 17:24:09 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/03/11 05:16:04 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,3 +56,6 @@ int			parse(char *s, t_list **head);
 int			is_sorted(t_stack *a);
 void		sm_sort(t_stack *a, t_stack *b);
 #endif
+
+/* bonus */
+void    read_and_exec_ops(t_stack *a, t_stack *b);

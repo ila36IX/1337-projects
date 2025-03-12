@@ -44,7 +44,7 @@ t_list	*arr_to_list(char **arr, int size)
  * parse - add integers in string into the end linked list
  * and check if string is valid integer or space seperated
  * integers
- * 
+ *
  * @head: head of linked list
  * @s: string contains integers
  *
