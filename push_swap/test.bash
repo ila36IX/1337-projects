@@ -8,8 +8,8 @@ while [ $i -lt $tests ]; do
   i=$(($i + 1))
   args=`shuf --head-count=$test_numbers_count --input-range=1-999 | tr "\n" " "`
   ops=$(./push_swap $args)
-  number_of_ops=$(printf "$ops" | wc -l)
-  sorted=$(printf "$ops" | ./checker $args )
+  number_of_ops=$(echo "$ops" | wc -l)
+  sorted=$(echo "$ops" | ./checker_linux $args)
   if [[ "$sorted" == "OK" ]] && [[ "$number_of_ops" -lt 7500 ]]; then
     printf "."
     passed=$(($passed + 1))
