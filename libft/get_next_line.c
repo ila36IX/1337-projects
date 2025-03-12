@@ -6,29 +6,11 @@
 /*   By: username <your@email.com>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 15:40:37 by username          #+#    #+#             */
-/*   Updated: 2025/03/12 08:11:32 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/03/12 08:14:06 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
-
-void	*ft_calloc(size_t num, size_t size)
-{
-	void	*buff;
-	size_t	n;
-	size_t	i;
-
-	if (size && num > SIZE_MAX / size)
-		return (NULL);
-	n = num * size;
-	buff = malloc(n);
-	if (!buff)
-		return (NULL);
-	i = 0;
-	while (i < n)
-		((char *)buff)[i++] = 0;
-	return (buff);
-}
+#include "libft.h"
 
 char	*extract_line(char **buffer)
 {

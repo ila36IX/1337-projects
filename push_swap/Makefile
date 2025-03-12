@@ -9,7 +9,7 @@ OBJ_BONUS = $(SRC_BONUS:%.c=%.o)
 
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
-CFLAGS= -g -ggdb3
+CFLAGS= -Wall -Wextra -Werror
 NAME=push_swap
 CHECKER=checker
 
@@ -27,11 +27,12 @@ $(CHECKER): $(OBJ_BONUS) $(LIBFT)
 	$(CC) $(CFLAGS) $(OBJ_BONUS) -L$(LIBFT_DIR) -lft -o $(CHECKER)
 
 clean: 
-	@$(RM) $(SRC_OBJ)
+	@$(RM) $(SRC_OBJ) $(OBJ_BONUS)
 	@$(MAKE) -C $(LIBFT_DIR) clean
 
 fclean: clean
 	@$(RM) $(NAME)
+	@$(RM) $(CHECKER)
 	@$(MAKE) -C $(LIBFT_DIR) fclean
 
 

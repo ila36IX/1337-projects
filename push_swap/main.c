@@ -146,6 +146,8 @@ int	main(int ac, char **av)
 	t_stack	b;
 	size_t	size;
 
+	if (ac == 1)
+		return (0);
 	size = ac - 1;
 	a.head = arr_to_list(&av[1], size);
 	if (!a.head)

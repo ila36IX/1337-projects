@@ -55,7 +55,8 @@ int			parse(char *s, t_list **head);
 
 int			is_sorted(t_stack *a);
 void		sm_sort(t_stack *a, t_stack *b);
-#endif
 
 /* bonus */
-void    read_and_exec_ops(t_stack *a, t_stack *b);
+void		read_and_exec_ops(t_stack *a, t_stack *b);
+
+#endif

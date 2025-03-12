@@ -63,10 +63,10 @@ void	sort_stack(t_stack *a, t_stack *b, int *arr)
 	int	size;
 
 	i = 0;
-	if (a->size >= 100)
+	if (a->size > 100)
 		j = a->size / 13;
 	else
-		j = a->size / 6;
+		j = a->size / 7;
 	size = a->size;
 	while (a->size > 0)
 	{
