@@ -58,6 +58,7 @@ void				ft_putendl_fd(char *s, int fd);
 void				ft_putnbr_fd(int n, int fd);
 char				*get_next_line(int fd);
 char				*ft_substr_ptr(char const *start, char const *end);
+int					ft_strcmp(const char *s1, const char *s2);
 
 typedef struct s_list
 {
