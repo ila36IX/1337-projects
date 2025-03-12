@@ -6,7 +6,7 @@
 /*   By: username <your@email.com>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 15:40:37 by username          #+#    #+#             */
-/*   Updated: 2024/12/06 23:44:37 by username         ###   ########.fr       */
+/*   Updated: 2025/03/12 08:11:32 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,7 @@ char	*get_next_line(int fd)
 	{
 		if (buffer)
 			free(buffer);
+		buffer = NULL;
 		return (NULL);
 	}
 	if (!buffer)
