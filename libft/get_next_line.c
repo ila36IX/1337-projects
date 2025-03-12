@@ -6,11 +6,29 @@
 /*   By: username <your@email.com>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 15:40:37 by username          #+#    #+#             */
-/*   Updated: 2025/03/03 17:38:48 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/03/12 08:11:32 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "get_next_line.h"
+
+void	*ft_calloc(size_t num, size_t size)
+{
+	void	*buff;
+	size_t	n;
+	size_t	i;
+
+	if (size && num > SIZE_MAX / size)
+		return (NULL);
+	n = num * size;
+	buff = malloc(n);
+	if (!buff)
+		return (NULL);
+	i = 0;
+	while (i < n)
+		((char *)buff)[i++] = 0;
+	return (buff);
+}
 
 char	*extract_line(char **buffer)
 {
@@ -77,11 +95,12 @@ char	*get_next_line(int fd)
 	char		*temp_buffer;
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > INT_MAX)
-        {
-                if (buffer)
-                        free(buffer);
+	{
+		if (buffer)
+			free(buffer);
+		buffer = NULL;
 		return (NULL);
-        }
+	}
 	if (!buffer)
 		buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	while (buffer)
