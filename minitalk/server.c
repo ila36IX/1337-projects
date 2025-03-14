@@ -33,6 +33,7 @@ void	next_byte(void)
 		g_payload->byte_i = 0;
 		ft_bzero(g_payload->s, BUFFER_SIZE);
 		kill(g_payload->sender_pid, SIGUSR2);
+		write(1, "\n", 1);
 		return ;
 	}
 	(g_payload->byte_i)++;
@@ -55,6 +56,7 @@ void	process_bit(char bit)
 	else
 		(g_payload->bit_i)++;
 }
+#define IGNORE_CLIENT_AFTER 2
 
 void	handle_bit(int signo, siginfo_t *info, void *context)
 {
@@ -62,8 +64,19 @@ void	handle_bit(int signo, siginfo_t *info, void *context)
 
 	(void)context;
 	sender_pid = info->si_pid;
+	if (g_payload->timeout >= IGNORE_CLIENT_AFTER)
+	{
+		g_payload->byte_i = 0;
+		g_payload->bit_i = 0;
+		g_payload->sender_pid = sender_pid;
+		ft_bzero(g_payload->s, sizeof(g_payload->s));
+	}
 	if (g_payload->sender_pid != sender_pid && g_payload->byte_i != 0)
+	{
+		g_payload->timeout++;
 		return ;
+	}
+	g_payload->timeout = 0;
 	g_payload->sender_pid = sender_pid;
 	process_bit(signo == SIGUSR2);
 	kill(sender_pid, SIGUSR1);

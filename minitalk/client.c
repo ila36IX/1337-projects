@@ -99,7 +99,6 @@ int	main(int ac, char **av)
 		ft_printf("Error: zero or unvalid PID\n");
 		return (1);
 	}
-	ft_printf("%d\n", pid);
 	stream_string(av[2], pid);
 	return (0);
 }

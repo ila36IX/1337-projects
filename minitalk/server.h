@@ -22,6 +22,7 @@ typedef struct shared_data
 	int		byte_i;
 	int		bit_i;
 	int		sender_pid;
+	int		timeout;
 }			t_stream;
 
 # define BUFFER_SIZE 1024
