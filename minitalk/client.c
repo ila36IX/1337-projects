@@ -6,7 +6,7 @@
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/25 18:59:36 by aljbari           #+#    #+#             */
-/*   Updated: 2024/12/28 16:41:22 by aljbari          ###   ########.fr       */
+/*   Updated: 2025/03/14 10:05:57 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void	handle_ackn(int signo, siginfo_t *info, void *context)
 
 int	main(int ac, char **av)
 {
-	int					pid;
+	pid_t				pid;
 	struct sigaction	sa;
 
 	ft_bzero(&sa, sizeof(sa));
@@ -93,10 +93,10 @@ int	main(int ac, char **av)
 		ft_printf("Usage: <PID> <message>\n");
 		return (1);
 	}
-	pid = atoi(av[1]);
-	if (pid == 0)
+	pid = ft_atol_parse(av[1]);
+	if (pid == 0 || pid == INT_MAX)
 	{
-		ft_printf("Error: zero or unvalid PID\n");
+		ft_printf("Error: unvalid PID\n");
 		return (1);
 	}
 	stream_string(av[2], pid);

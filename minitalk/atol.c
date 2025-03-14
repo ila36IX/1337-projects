@@ -1,28 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.h                                           :+:      :+:    :+:   */
+/*   atol.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/25 18:59:25 by aljbari           #+#    #+#             */
-/*   Updated: 2025/03/14 10:03:54 by aljbari          ###   ########.fr       */
+/*   Created: 2025/03/14 10:03:09 by aljbari           #+#    #+#             */
+/*   Updated: 2025/03/14 10:03:39 by aljbari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CLIENT_H
-# define CLIENT_H
+#include <limits.h>
 
-# include "libft/libft.h"
-# include <signal.h>
-# include <stdlib.h>
-# include <sys/wait.h>
-# include <unistd.h>
+unsigned int	ft_atol_parse(char *s)
+{
+	unsigned int	n;
 
-# define TIMEOUT_DELAY 1000000
-# define QUEUE_DELAY 50
-# define RETRIES 3
-
-unsigned int	ft_atol_parse(char *s);
-
-#endif
+	n = 0;
+	while (*s >= '0' && *s <= '9')
+	{
+		n = n * 10 + *s++ - '0';
+		if (n >= INT_MAX)
+			return (INT_MAX);
+	}
+	if (*s)
+		return (INT_MAX);
+	return (n);
+}
