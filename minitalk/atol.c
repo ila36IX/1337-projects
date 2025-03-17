@@ -14,7 +14,7 @@
 
 unsigned int	ft_atol_parse(char *s)
 {
-	unsigned int	n;
+	unsigned long	n;
 
 	n = 0;
 	while (*s >= '0' && *s <= '9')
