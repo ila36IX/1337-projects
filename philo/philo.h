@@ -29,7 +29,6 @@ typedef struct {
         microsec_t birthtimes[MAX_PHILOS];
         microsec_t last_meal[MAX_PHILOS];
         pthread_mutex_t forks[MAX_PHILOS];
-        pthread_mutex_t lock_write;
 } t_shared;
 
 void *thread_func(void *);
@@ -47,4 +46,4 @@ void wait_in_mili(microsec_t amount);
 microsec_t time_since_dinner_starts(void);
 void update_last_meal_time(int philo);
 void update_last_meal_time(int philo);
-time_t get_last_meal_time(int philo);
+microsec_t time_after_last_meal(int philo);

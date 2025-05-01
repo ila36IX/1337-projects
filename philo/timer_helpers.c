@@ -1,5 +1,9 @@
 #include "philo.h"
 
+void run_dinner_clock(void)
+{
+        time_since_dinner_starts();
+}
 
 microsec_t  curr_time()
 {
@@ -33,10 +37,10 @@ void update_last_meal_time(int philo)
         shared->last_meal[philo] = curr_time();
 }
 
-time_t get_last_meal_time(int philo)
+microsec_t time_after_last_meal(int philo)
 {
         t_shared *shared;
 
         shared = shared_mem(GET, NULL);
-        return (shared->last_meal[philo]);
+        return (curr_time() - shared->last_meal[philo]);
 }
