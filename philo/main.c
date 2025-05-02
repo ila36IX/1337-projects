@@ -1,162 +1,94 @@
 #include "philo.h"
+#include <pthread.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 
-void     update_philo_meals_count(int philo)
-{
-        t_shared *shared;
+// checker
+// philos number must not be 0
 
-        shared = shared_mem(GET, NULL);
-        if (shared->must_eat_times == -1)
-                return ;
-        shared->philo_eat_times[philo]++;
+void wash_dishes(pthread_mutex_t *forks, pthread_t *threads, int num_of_philos)
+{
+        int i;
+ 
+        i = 0;
+        while (i < num_of_philos)
+                pthread_join(threads[i++], NULL);
+        i = 0;
+        while (i < num_of_philos)
+                pthread_mutex_destroy(&forks[i++]);
 }
 
-void philo_life(int philo)
+void    init_philos(int ac, char **av, t_philo *philos, pthread_mutex_t *forks)
 {
+        int i;
+        int num_of_philos;
 
-        pthread_mutex_lock(left_fork(philo));
-        printf("%ld %d has taken a fork\n", time_since_dinner_starts(), philo);
-        pthread_mutex_lock(right_fork(philo));
-        printf("%ld %d has taken a fork\n", time_since_dinner_starts(), philo);
-        printf("%ld %d is eating\n",time_since_dinner_starts(), philo);
-        update_last_meal_time(philo);
-        update_philo_meals_count(philo);
-        wait_in_mili(time_to_eat());
-        pthread_mutex_unlock(left_fork(philo));
-        pthread_mutex_unlock(right_fork(philo));
-        printf("%ld %d is sleeping\n", time_since_dinner_starts(), philo);
-        wait_in_mili(time_to_sleep());
-        printf("%ld %d is thinking\n", time_since_dinner_starts(), philo);
-}
-
-int     all_meals_eaten()
-{
-        int philo;
-        t_shared *shared;
-
-        shared = shared_mem(GET, NULL);
-
-        philo = 0;
-        while(philo < shared->n)
+        num_of_philos = atoi(av[1]);
+        i = 0;
+        while (i < num_of_philos)
         {
-                if (shared->philo_eat_times[philo] != shared->must_eat_times)
-                        return (0);
-                philo++;
+                philos[i].num_of_philos = atoi(av[1]);
+                philos[i].ttd = atoi(av[2]);
+                philos[i].tte = atoi(av[3]);
+                philos[i].tts = atoi(av[4]);
+                philos[i].died_philo = -1;
+                if (ac == 6)
+                        philos[i].must_eat_times = atoi(av[5]);
+                else
+                        philos[i].must_eat_times = -1;
+                philos[i].left_fork = forks[i];
+                philos[i].left_fork = forks[(i + 1) % num_of_philos];
+                philos[i].number = i + 1;
+                philos[i].eat_times = 0;
+                philos[i].dinner_status = 1;
+                i++;
         }
-        return (1);
 }
 
-int     nobody_dies()
+void init_forks(pthread_mutex_t *forks, int num_of_forks)
 {
-        int philo;
-        t_shared *shared;
-        time_t last_meal_time;
+        int i;
 
-        shared = shared_mem(GET, NULL);
+        i = 0;
+        while (i < num_of_forks)
+                pthread_mutex_init(&forks[i++], NULL);
+}
 
-        philo = 0;
-        while(philo < shared->n)
+void run_threads(t_philo *philos, pthread_t *threads)
+{
+        int i;
+
+        i = 0;
+        while (i < philos[0].num_of_philos)
         {
-                last_meal_time = time_after_last_meal(philo);
-                if (last_meal_time > shared->ttd && shared->philo_eat_times[philo] != shared->must_eat_times)
-                {
-                        shared->died_philo = philo;
-                        shared->time_of_death = last_meal_time;
-                        return (0);
-                }
-                philo++;
+                philos[i].last_meal_time = curr_time();
+                pthread_create(&threads[i], NULL, thread_func, &philos[i]);
+                i++;
         }
-        return (1);
 }
-
-int     dead_philo()
-{
-        t_shared *shared;
-
-        shared = shared_mem(GET, NULL);
-        return (shared->died_philo);
-}
-
-
-int     philo_eats_enough(int philo)
-{
-        t_shared *shared;
-
-        shared = shared_mem(GET, NULL);
-        if (shared->must_eat_times == -1)
-                return (0);
-        if (shared->philo_eat_times[philo] == shared->must_eat_times)
-                return (1);
-        return (0);
-}
-
-void *thread_func(void *p)
-{
-        int philo;
-
-        philo = (long) p;
-        if (philo_birthtime(philo) == 0)
-                init_philo_birth(philo);
-        if (philo % 2)
-                wait_in_mili(1);
-        while (dead_philo() == -1 && !philo_eats_enough(philo))
-        {
-                philo_life(philo);
-        }
-        return (NULL);
-}
-
-void run_dinner_clock(void);
 
 int main(int ac, char *av[])
 {
-        t_shared shared;
+        t_philo philos[MAX_PHILOS];
+        pthread_mutex_t forks[MAX_PHILOS];
         pthread_t threads[MAX_PHILOS];
-        int i;
 
         if (ac != 5 && ac != 6)
                 return (1);
-        else
+        init_philos(ac, av, (t_philo *)&philos, (pthread_mutex_t *)&forks);
+        // check args
+        init_forks((pthread_mutex_t *)&forks, philos[0].num_of_philos);
+        start_dinner_clock();
+        run_threads((t_philo *) philos, (pthread_t *)threads);
+        while (philos[0].dinner_status == 1)
         {
-                shared.n = atoi(av[1]);
-                shared.ttd = atoi(av[2]);
-                shared.tte = atoi(av[3]);
-                shared.tts = atoi(av[4]);
-                shared.died_philo = -1;
-                if (ac == 6)
-                        shared.must_eat_times = atoi(av[5]);
-                else
-                        shared.must_eat_times = -1;
+                check_philos_full((t_philo *)&philos);
+                check_starvation((t_philo *)&philos);
         }
-
-        shared_mem(SET, &shared);
-        bzero(shared.birthtimes, sizeof(shared.birthtimes));
-        i = 0;
-        while (i < shared.n)
-        {
-                pthread_mutex_init(&shared.forks[i], NULL);
-                i++;
-        }
-        i = 0;
-        run_dinner_clock();
-        while (i < shared.n)
-        {
-                shared.last_meal[i] = curr_time();
-                pthread_create(&threads[i], NULL, thread_func, (void *) (long)i);
-                i++;
-        }
-        i = 0;
-        while (i < shared.n)
-                pthread_detach(threads[i++]);
-        while (nobody_dies())
-        {
-                if (all_meals_eaten())
-                        break;
-                wait_in_mili(5);
-        }
-        if (dead_philo() != -1)
-                printf("%ld %d is dead\n", time_since_dinner_starts(), dead_philo());
+        if (philos[0].died_philo != -1)
+                printf("%ld %d is dead\n", philos[0].time_of_death, philos[0].died_philo);
+        wash_dishes((pthread_mutex_t *)&forks, (pthread_t *)&threads, philos[0].num_of_philos);
         return (0);
 }

@@ -1,6 +1,6 @@
 #include "philo.h"
 
-void run_dinner_clock(void)
+void start_dinner_clock(void)
 {
         time_since_dinner_starts();
 }
@@ -15,7 +15,7 @@ microsec_t  curr_time()
 
 void wait_in_mili(microsec_t amount)
 {
-        usleep(TO_MILI(amount));
+        usleep(amount * 1000);
 }
 
 microsec_t time_since_dinner_starts(void)
@@ -27,20 +27,4 @@ microsec_t time_since_dinner_starts(void)
         else
                 dinner_start_clock = curr_time();
         return (curr_time() - dinner_start_clock);
-}
-
-void update_last_meal_time(int philo)
-{
-        t_shared *shared;
-
-        shared = shared_mem(GET, NULL);
-        shared->last_meal[philo] = curr_time();
-}
-
-microsec_t time_after_last_meal(int philo)
-{
-        t_shared *shared;
-
-        shared = shared_mem(GET, NULL);
-        return (curr_time() - shared->last_meal[philo]);
 }
