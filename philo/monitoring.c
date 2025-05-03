@@ -1,20 +1,31 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   monitoring.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aljbari <aljbari@student.1337.ma>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/03 15:46:12 by aljbari           #+#    #+#             */
+/*   Updated: 2025/05/03 15:47:00 by aljbari          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
-void    set_dinner_as_over(t_philo *philos)
+void	set_dinner_as_over(t_philo *philos)
 {
-        int i;
+	int	i;
 
-        i = 0;
-        while(i < philos[0].num_of_philos)
-                philos[i++].dinner_status = 0;
+	i = 0;
+	while (i < philos[0].num_of_philos)
+		philos[i++].dinner_status = 0;
 }
 
-
-void    log_action(char *action, t_philo *philo)
+void	log_action(char *action, t_philo *philo)
 {
-        if (philo->dinner_status == 0)
-                return ;
-        printf("%ld %d %s\n", time_since_dinner_starts(), philo->number, action);
+	if (philo->dinner_status == 0)
+		return ;
+	printf("%ld %d %s\n", time_since_dinner_starts(), philo->number, action);
 }
 
 /**
@@ -26,21 +37,21 @@ void    log_action(char *action, t_philo *philo)
  *
  * Return: Nothing
  */
-void    check_philos_full(t_philo *philos)
+void	check_philos_full(t_philo *philos)
 {
-        int i;
+	int	i;
 
-        if (philos[0].must_eat_times == -1)
-                return ;
-        i = 0;
-        while(i < philos[0].num_of_philos)
-        {
-                if (philos[i].eat_times < philos[i].must_eat_times)
-                        return ;
-                i++;
-        }
-        set_dinner_as_over(philos);
-        return ;
+	if (philos[0].must_eat_times == -1)
+		return ;
+	i = 0;
+	while (i < philos[0].num_of_philos)
+	{
+		if (philos[i].eat_times < philos[i].must_eat_times)
+			return ;
+		i++;
+	}
+	set_dinner_as_over(philos);
+	return ;
 }
 
 /**
@@ -51,25 +62,23 @@ void    check_philos_full(t_philo *philos)
  *
  * Return: Nothing
  */
-void     check_starvation(t_philo *philos)
+void	check_starvation(t_philo *philos)
 {
-        t_philo *philo;
-        int i;
+	t_philo	*philo;
+	int		i;
 
-
-        i = 0;
-        while(i < philos[0].num_of_philos)
-        {
-                philo = &philos[i];
-                if (curr_time() - philo->last_meal_time > philo->ttd)
-                {
-                        philo->died_philo = philo->number;
-                        philo->time_of_death = time_since_dinner_starts();
-                        printf("is problem from here? %ld\n", curr_time() - philo->last_meal_time);
-                        set_dinner_as_over(philos);
-                        return ;
-                }
-                i++;
-        }
-        return ;
+	i = 0;
+	while (i < philos[0].num_of_philos)
+	{
+		philo = &philos[i];
+		if (curr_time() - philo->last_meal_time > philo->ttd)
+		{
+			set_dinner_as_over(philos);
+			printf("%ld %d is dead\n", time_since_dinner_starts(),
+				philo->number);
+			return ;
+		}
+		i++;
+	}
+	return ;
 }
