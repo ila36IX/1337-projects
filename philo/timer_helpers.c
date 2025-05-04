@@ -24,11 +24,14 @@ t_microsec	curr_time(void)
 	gettimeofday(&tv, NULL);
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
-#define CHUNK_TIME 10
 
-void	wait_in_mili(t_microsec amount)
+void	ft_usleep(t_microsec milliseconds, t_philo *philo)
 {
-	usleep(amount * 1000);
+	time_t	start;
+
+	start = curr_time();
+	while ((curr_time() - start) < milliseconds && philo->dinner_status == 1)
+		usleep(500);
 }
 
 t_microsec	time_since_dinner_starts(void)

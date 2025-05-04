@@ -25,7 +25,8 @@ void	log_action(char *action, t_philo *philo)
 {
 	if (philo->dinner_status == 0)
 		return ;
-	printf("%ld %d %s\n", time_since_dinner_starts(), philo->number, action);
+	printf(YELLOW "%ld" RESET " " BOLD "%d " RESET "%s\n",
+		time_since_dinner_starts(), philo->number, action);
 }
 
 /**
@@ -74,7 +75,7 @@ void	check_starvation(t_philo *philos)
 		if (curr_time() - philo->last_meal_time > philo->ttd)
 		{
 			set_dinner_as_over(philos);
-			printf("%ld %d is dead\n", time_since_dinner_starts(),
+			printf(RED "%ld %d is dead\n" RESET, time_since_dinner_starts(),
 				philo->number);
 			return ;
 		}
