@@ -76,7 +76,7 @@ int	args_is_valid(t_philo philo)
 		return (0);
 	if (philo.ttd < 60 || philo.tte < 60 || philo.tts < 60)
 		return (0);
-	if (philo.num_of_philos > 200)
+	if (philo.num_of_philos > 200 || philo.num_of_philos == 0)
 		return (0);
 	if (philo.must_eat_times == INT_MAX)
 		return (0);
