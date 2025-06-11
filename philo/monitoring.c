@@ -17,16 +17,23 @@ void	set_dinner_as_over(t_philo *philos)
 	int	i;
 
 	i = 0;
+	pthread_mutex_lock(philos[0].status_mtx);
 	while (i < philos[0].num_of_philos)
 		philos[i++].dinner_status = 0;
+	pthread_mutex_unlock(philos[0].status_mtx);
 }
 
 void	log_action(char *action, t_philo *philo)
 {
+	pthread_mutex_lock(philo->status_mtx);
 	if (philo->dinner_status == 0)
+	{
+		pthread_mutex_unlock(philo->status_mtx);
 		return ;
+	}
 	printf(YELLOW "%ld" RESET " " BOLD "%d " RESET "%s\n",
 		time_since_dinner_starts(), philo->number, action);
+	pthread_mutex_unlock(philo->status_mtx);
 }
 
 /**
@@ -42,13 +49,16 @@ void	check_philos_full(t_philo *philos)
 {
 	int	i;
 
-	if (philos[0].must_eat_times == -1)
-		return ;
 	i = 0;
 	while (i < philos[0].num_of_philos)
 	{
+		pthread_mutex_lock(&philos[i].eat_mtx);
 		if (philos[i].eat_times < philos[i].must_eat_times)
+		{
+			pthread_mutex_unlock(&philos[i].eat_mtx);
 			return ;
+		}
+		pthread_mutex_unlock(&philos[i].eat_mtx);
 		i++;
 	}
 	set_dinner_as_over(philos);
@@ -72,13 +82,16 @@ void	check_starvation(t_philo *philos)
 	while (i < philos[0].num_of_philos)
 	{
 		philo = &philos[i];
+		pthread_mutex_lock(&philo->eat_mtx);
 		if (curr_time() - philo->last_meal_time > philo->ttd)
 		{
 			set_dinner_as_over(philos);
 			printf(RED "%ld %d is dead\n" RESET, time_since_dinner_starts(),
 				philo->number);
+			pthread_mutex_unlock(&philo->eat_mtx);
 			return ;
 		}
+		pthread_mutex_unlock(&philo->eat_mtx);
 		i++;
 	}
 	return ;

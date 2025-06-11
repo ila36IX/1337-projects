@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "philo.h"
+#include <unistd.h>
 
 void	init_forks(pthread_mutex_t *forks, int num_of_forks)
 {
@@ -33,6 +34,7 @@ void	run_threads(t_philo *philos, pthread_t *threads)
 		pthread_create(&threads[i], NULL, thread_func, &philos[i]);
 		i += 2;
 	}
+	usleep(500);
 	i = 1;
 	while (i < philos[0].num_of_philos)
 	{
@@ -51,12 +53,14 @@ void	philo_life(t_philo *philo)
 		return ;
 	}
 	pthread_mutex_lock(philo->left_fork);
+	log_action("has taken a fork", philo);
 	pthread_mutex_lock(philo->right_fork);
-	log_action("has taken a fork", philo);
-	log_action("has taken a fork", philo);
-	log_action("is eating", philo);
+	pthread_mutex_lock(&philo->eat_mtx);
 	philo->last_meal_time = curr_time();
 	philo->eat_times++;
+	pthread_mutex_unlock(&philo->eat_mtx);
+	log_action("has taken a fork", philo);
+	log_action("is eating", philo);
 	ft_usleep(philo->tte, philo);
 	pthread_mutex_unlock(philo->left_fork);
 	pthread_mutex_unlock(philo->right_fork);
@@ -70,7 +74,16 @@ void	*thread_func(void *p)
 	t_philo	*philo;
 
 	philo = p;
-	while (philo->dinner_status == 1)
+	while (1)
+	{
+		pthread_mutex_lock(&philo->eat_mtx);
+		if (!philo->dinner_status)
+		{
+			pthread_mutex_unlock(&philo->eat_mtx);
+			break;
+		}
+		pthread_mutex_unlock(&philo->eat_mtx);
 		philo_life(philo);
+	}
 	return (NULL);
 }

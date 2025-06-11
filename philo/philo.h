@@ -41,8 +41,10 @@ typedef struct s_philo
 	int				tts;
 	int				tte;
 	time_t			last_meal_time;
+	pthread_mutex_t	eat_mtx;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
+	pthread_mutex_t	*status_mtx;
 }					t_philo;
 
 void				*thread_func(void *p);
