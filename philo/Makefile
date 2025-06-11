@@ -1,5 +1,5 @@
 CC = cc
-SRC_FILES= $(wildcard *.c)
+SRC_FILES= atoi.c  main.c  monitoring.c  thread.c  timer_helpers.c
 SRC_OBJ= $(SRC_FILES:%.c=%.o)
 CFLAGS= -Wall -Wextra -Werror -g -ggdb3
 NAME=philo
