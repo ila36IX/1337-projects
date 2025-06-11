@@ -57,3 +57,4 @@ void				ft_usleep(t_microsec amount, t_philo *philo);
 void				log_action(char *action, t_philo *philo);
 void				init_forks(pthread_mutex_t *forks, int num_of_forks);
 void				run_threads(t_philo *philos, pthread_t *threads);
+unsigned int		ft_atoi(char *s);

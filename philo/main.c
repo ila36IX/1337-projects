@@ -16,33 +16,22 @@
 // checker
 // philos number must not be 0
 
-void	wash_dishes(pthread_mutex_t *forks, pthread_t *threads,
-		int num_of_philos)
+void	wash_dishes(t_philo *philos, pthread_mutex_t *forks, pthread_t *threads)
 {
 	int	i;
+	int	num_of_philos;
 
+	num_of_philos = philos[0].num_of_philos;
 	i = 0;
 	while (i < num_of_philos)
 		pthread_join(threads[i++], NULL);
 	i = 0;
 	while (i < num_of_philos)
 		pthread_mutex_destroy(&forks[i++]);
-}
-
-unsigned int	ft_atoi(char *s)
-{
-	unsigned long	n;
-
-	n = 0;
-	while (*s >= '0' && *s <= '9')
-	{
-		n = n * 10 + *s++ - '0';
-		if (n >= INT_MAX)
-			return (INT_MAX);
-	}
-	if (*s)
-		return (INT_MAX);
-	return (n);
+	i = 0;
+	while (i < num_of_philos)
+		pthread_mutex_destroy(&philos[i++].eat_mtx);
+	pthread_mutex_destroy(philos[0].status_mtx);
 }
 
 void	init_philos(int ac, char **av, t_philo *philos, pthread_mutex_t *forks)
@@ -71,10 +60,9 @@ void	init_philos(int ac, char **av, t_philo *philos, pthread_mutex_t *forks)
 	}
 }
 
-
-void init_philo_mutexes(t_philo *philos, pthread_mutex_t *eat_mtx)
+void	init_philo_mutexes(t_philo *philos, pthread_mutex_t *eat_mtx)
 {
-	int i;
+	int	i;
 
 	pthread_mutex_init(eat_mtx, NULL);
 	i = 0;
@@ -86,16 +74,30 @@ void init_philo_mutexes(t_philo *philos, pthread_mutex_t *eat_mtx)
 	}
 }
 
-int	args_is_valid(t_philo philo)
+int	args_is_valid(int ac, char **av)
 {
-	if (philo.ttd == INT_MAX || philo.tte == INT_MAX || philo.tts == INT_MAX)
+	int	num_of_philos;
+	int	ttd;
+	int	tte;
+	int	tts;
+
+	if (ac != 5 && ac != 6)
 		return (0);
-	if (philo.ttd < 60 || philo.tte < 60 || philo.tts < 60)
+	num_of_philos = ft_atoi(av[1]);
+	ttd = ft_atoi(av[3]);
+	tte = ft_atoi(av[3]);
+	tts = ft_atoi(av[4]);
+	if (ttd == INT_MAX || tte == INT_MAX || tts == INT_MAX)
 		return (0);
-	if (philo.num_of_philos > 200 || philo.num_of_philos == 0)
+	if (ttd < 60 || tte < 60 || tts < 60)
 		return (0);
-	if (philo.must_eat_times == INT_MAX)
+	if (num_of_philos > 200 || num_of_philos == 0)
 		return (0);
+	if (ac == 6)
+	{
+		if (ft_atoi(av[5]) == INT_MAX)
+			return (0);
+	}
 	return (1);
 }
 
@@ -104,17 +106,15 @@ int	main(int ac, char *av[])
 	t_philo			philos[MAX_PHILOS];
 	pthread_mutex_t	forks[MAX_PHILOS];
 	pthread_t		threads[MAX_PHILOS];
-	pthread_mutex_t status_mtx;
+	pthread_mutex_t	status_mtx;
 
-	if (ac != 5 && ac != 6)
-		return (1);
-	init_philos(ac, av, philos, forks);
-	init_philo_mutexes(philos, &status_mtx);
-	if (args_is_valid(philos[0]) == 0)
+	if (args_is_valid(ac, av) == 0)
 	{
 		printf("INVALID ARGUMENTS\n");
 		return (1);
 	}
+	init_philos(ac, av, philos, forks);
+	init_philo_mutexes(philos, &status_mtx);
 	init_forks(forks, philos[0].num_of_philos);
 	run_threads(philos, threads);
 	while (philos[0].dinner_status == 1)
@@ -123,6 +123,6 @@ int	main(int ac, char *av[])
 			check_philos_full(philos);
 		check_starvation(philos);
 	}
-	wash_dishes(forks, threads, philos[0].num_of_philos);
+	wash_dishes(philos, forks, threads);
 	return (0);
 }

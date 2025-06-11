@@ -80,7 +80,7 @@ void	*thread_func(void *p)
 		if (!philo->dinner_status)
 		{
 			pthread_mutex_unlock(&philo->eat_mtx);
-			break;
+			break ;
 		}
 		pthread_mutex_unlock(&philo->eat_mtx);
 		philo_life(philo);
