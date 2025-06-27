@@ -84,7 +84,7 @@ int	args_is_valid(int ac, char **av)
 	if (ac != 5 && ac != 6)
 		return (0);
 	num_of_philos = ft_atoi(av[1]);
-	ttd = ft_atoi(av[3]);
+	ttd = ft_atoi(av[2]);
 	tte = ft_atoi(av[3]);
 	tts = ft_atoi(av[4]);
 	if (ttd == INT_MAX || tte == INT_MAX || tts == INT_MAX)
