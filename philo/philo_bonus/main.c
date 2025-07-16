@@ -64,12 +64,14 @@ typedef struct s_info
 
 typedef struct s_philo
 {
-	time_t			last_eat_time;
-	int			eat_times;
+	int				eat_times;
 	int				id;
-	pthread_mutex_t	mtx;
-	t_info			info;
+	int				sim_status;
 	pid_t			pid;
+	time_t			last_eat_time;
+	t_info			info;
+	pthread_mutex_t	mtx;
+	pthread_mutex_t	mtx_sim_status;
 }					t_philo;
 
 void	*sim_status_func(void *_philo)
@@ -79,11 +81,11 @@ void	*sim_status_func(void *_philo)
 	philo = _philo;
 	sem_wait(philo->info.sem_sim_status);
 	sem_post(philo->info.sem_sim_status);
-	sem_close(philo->info.sem_forks);
-	sem_close(philo->info.sem_write);
-	sem_close(philo->info.sem_sim_status);
-	sem_close(philo->info.sem_full);
-	exit(0);
+	sem_wait(philo->info.sem_write);
+	pthread_mutex_lock(&philo->mtx_sim_status);
+	philo->sim_status = 0;
+	pthread_mutex_unlock(&philo->mtx_sim_status);
+	sem_post(philo->info.sem_write);
 	return (NULL);
 }
 
@@ -110,7 +112,8 @@ void	*am_alive(void *_philo)
 			printf("%ld %d is dead\n", time_since_dinner_starts(), philo->id);
 			sem_post(philo->info.sem_sim_status);
 			sem_post(philo->info.sem_sim_status);
-			exit(0);
+			sem_post(philo->info.sem_write);
+			return (0);
 		}
 		pthread_mutex_unlock(&philo->mtx);
 	}
@@ -119,10 +122,31 @@ void	*am_alive(void *_philo)
 void	log_action(char *action, t_philo *philo)
 {
 	sem_wait(philo->info.sem_write);
-	printf(YELLOW "%ld" RESET " " BOLD "%d " RESET "%s\n",
-		time_since_dinner_starts(), philo->id, action);
+	pthread_mutex_lock(&philo->mtx_sim_status);
+	if (philo->sim_status)
+		printf(YELLOW "%ld" RESET " " BOLD "%d " RESET "%s\n",
+			time_since_dinner_starts(), philo->id, action);
+	pthread_mutex_unlock(&philo->mtx_sim_status);
 	sem_post(philo->info.sem_write);
 }
+
+void	ft_usleep(time_t milliseconds, t_philo *philo)
+{
+	time_t	start;
+
+	start = curr_time();
+	while ((curr_time() - start) < milliseconds)
+	{
+		pthread_mutex_lock(&philo->mtx_sim_status);
+		if (!philo->sim_status)
+			break ;
+		pthread_mutex_unlock(&philo->mtx_sim_status);
+		usleep(500);
+	}
+	pthread_mutex_unlock(&philo->mtx_sim_status);
+}
+
+
 
 /**
  * philo_life - the miserable life of a philospher
@@ -132,6 +156,14 @@ void	philo_life(t_philo *philo)
 {
 	while (1)
 	{
+
+		pthread_mutex_lock(&philo->mtx_sim_status);
+		if (!philo->sim_status)
+		{
+			pthread_mutex_unlock(&philo->mtx_sim_status);
+			return ;
+		}
+		pthread_mutex_unlock(&philo->mtx_sim_status);
 		sem_wait(philo->info.sem_forks);
 		log_action("has taken a fork", philo);
 		sem_wait(philo->info.sem_forks);
@@ -143,11 +175,11 @@ void	philo_life(t_philo *philo)
 		pthread_mutex_unlock(&philo->mtx);
 		log_action("has taken a fork!", philo);
 		log_action("is eating", philo);
-		usleep(philo->info.tte * 1000);
+		ft_usleep(philo->info.tte, philo);
 		sem_post(philo->info.sem_forks);
 		sem_post(philo->info.sem_forks);
 		log_action("is sleeping", philo);
-		usleep(philo->info.tts * 1000);
+		ft_usleep(philo->info.tts, philo);
 		log_action("is thinking", philo);
 		usleep(500);
 	}
@@ -183,9 +215,9 @@ void	start_simulation(t_philo *philos)
 		{
 			pthread_create(&monitor, NULL, am_alive, &philos[i]);
 			pthread_create(&sim_status, NULL, sim_status_func, &philos[i]);
-			pthread_detach(sim_status);
-			pthread_detach(monitor);
 			philo_process(&philos[i]);
+			pthread_join(monitor, NULL);
+			pthread_join(sim_status, NULL);
 		}
 		i++;
 	}
@@ -199,9 +231,11 @@ void	init_philos(t_philo *philos, t_info info)
 	while (i < info.nbr)
 	{
 		pthread_mutex_init(&philos[i].mtx, NULL);
+		pthread_mutex_init(&philos[i].mtx_sim_status, NULL);
 		philos[i].id = i + 1;
 		philos[i].info = info;
 		philos[i].eat_times = 0;
+		philos[i].sim_status = 1;
 		i++;
 	}
 }
