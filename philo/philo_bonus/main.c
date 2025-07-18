@@ -65,7 +65,7 @@ bool	init_info(int ac, char **av, t_info *info)
 		return (false);
 	if (info->ttd < 60 || info->tte < 60 || info->tts < 60)
 		return (false);
-	if (info->nbr > 200 || info->nbr == 0 || info->time_of_eats == INT_MAX
+	if (info->nbr > 200 || info->nbr <= 0 || info->time_of_eats == INT_MAX
 		|| info->time_of_eats == 0)
 		return (false);
 	return (true);
