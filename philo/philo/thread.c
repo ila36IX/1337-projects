@@ -76,9 +76,9 @@ void	philo_life(t_philo *philo)
 	pthread_mutex_lock(&philo->eat_mtx);
 	philo->last_meal_time = curr_time();
 	philo->eat_times++;
-	pthread_mutex_unlock(&philo->eat_mtx);
 	log_action("has taken a fork", philo);
 	log_action("is eating", philo);
+	pthread_mutex_unlock(&philo->eat_mtx);
 	ft_usleep(philo->tte, philo);
 	pthread_mutex_unlock(philo->left_fork);
 	pthread_mutex_unlock(philo->right_fork);
