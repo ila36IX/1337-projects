@@ -34,6 +34,20 @@ void	wash_dishes(t_philo *philos, pthread_mutex_t *forks, pthread_t *threads)
 	pthread_mutex_destroy(philos[0].status_mtx);
 }
 
+void	assign_forks(int i, t_philo *philo, pthread_mutex_t *forks)
+{
+	if (i % 2)
+	{
+		philo->left_fork = forks + i;
+		philo->right_fork = forks + ((i + 1) % philo->num_of_philos);
+	}
+	else
+	{
+		philo->right_fork = forks + i;
+		philo->left_fork = forks + ((i + 1) % philo->num_of_philos);
+	}
+}
+
 void	init_philos(int ac, char **av, t_philo *philos, pthread_mutex_t *forks)
 {
 	int	i;
@@ -51,8 +65,7 @@ void	init_philos(int ac, char **av, t_philo *philos, pthread_mutex_t *forks)
 			philos[i].must_eat_times = ft_atoi(av[5]);
 		else
 			philos[i].must_eat_times = -1;
-		philos[i].left_fork = forks + i;
-		philos[i].right_fork = forks + ((i + 1) % num_of_philos);
+		assign_forks(i, &philos[i], forks);
 		philos[i].number = i + 1;
 		philos[i].eat_times = 0;
 		philos[i].dinner_status = 1;

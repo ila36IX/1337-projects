@@ -1,12 +1,12 @@
 CC = cc
 SRC_FILES= $(wildcard *.c)
 SRC_OBJ= $(SRC_FILES:%.c=%.o)
-CFLAGS= -Wall -Wextra -Werror -g -ggdb3
+CFLAGS= -Wall -Wextra -Werror
 NAME=philo
 
 all: $(NAME)
 
-bonus: libft_rule $(CHECKER)
+bonus: all
 
 $(NAME): $(SRC_OBJ)
 	$(CC) $(CFLAGS) $(SRC_OBJ) -o $(NAME)
